@@ -1,158 +1,199 @@
-module RegisterSpace = {
-  module U32 = {
-    type z =
-      | Z;
-    type s('n) =
-      | S('n): s('n);
-  };
-  module U64 = {
-    type z =
-      | Z;
-    type s('n) =
-      | S('n): s('n);
-  };
-  type z =
-    | Z;
-  type t('n) =
-    | U64('n): t(U64.s('n))
-    | U32('n): t(U32.s('n));
-  let firstU64 = U64(Z);
-};
-
-module RegisterType = {
+/*module RegisterType = {
   type u32;
   type u64;
-  type t = [ | `u32 | `u64];
-  let toString = (t) =>
+  type t(_) =
+    | U32: t(u32)
+    | U64: t(u64);
+
+  let generateName = {
+    let u32Counter = ref(0);
+    let u64Counter = ref(0);
+    let rv: type a. t(a) => string = (rType) =>
+      switch rType {
+      | U32 =>
+          incr(u32Counter);
+          Printf.sprintf("r%d", u32Counter^ - 1)
+      | U64 =>
+          incr(u64Counter);
+          Printf.sprintf("rd%d", u64Counter^ - 1)
+      };
+    rv
+  };
+
+  let toString: type a. t(a) => string = (t) =>
     switch t {
-    | `u32 => "u32"
-    | `u64 => "u64"
+    | U32 => "u32"
+    | U64 => "u64"
     };
-};
+};*/
 
 module RegisterSpec = {
-  type t = {
+  type u32;
+  type u64;
+
+  type rType(_) =
+    | U32: rType(u32)
+    | U64: rType(u64);
+
+  type t('phantom) = {
     name: string,
-    t: RegisterType.t
+    t: rType('phantom)
   };
-  let emit = (t) => "%" ++ t.name;
+  let emit: type a. t(a) => string = (t) => { let name = t.name; name };
 };
 
-module OperandSpec = {
-  type t =
-    | Register(RegisterSpec.t)
-    | Literal(int);
-  let emit = (t) =>
-    switch t {
-    | Register(spec) => RegisterSpec.emit(spec)
-    | Literal(n) => string_of_int(n)
+module Literal = {
+  type t('phantom) =
+    | Value(int): t('phantom);
+  
+  let toString: type a. t(a) => string = (t) => {
+    let s = switch t {
+    | Value(n) => n;
     };
+    string_of_int(s)
+  };
 };
 
-module Operation = {
-  module PseudoOperation = {
+/*module UnaryOperation = {
+  /* keep in mind that PTX assembly syntax is [instr.dstType.srcType dst, src] */
+  type t('dst, 'src) =
+    | Convert((RegisterSpec.t('dst), RegisterSpec.t('src)))
+    | ShiftRight((RegisterSpec.t('dst), RegisterSpec.t('src), int))
+    | ShiftLeft((RegisterSpec.t('dst), RegisterSpec.t('src), int));
+  let rec emit = (t) =>
+    switch t {
+    | Convert((dst, src)) =>
+      open RegisterType;
+      let instr = Printf.sprintf("cvt.%s.%s", RegisterType.toString(dst.t), RegisterType.toString(src.t));
+      open RegisterSpec;
+      Printf.sprintf("%s %s,%s;", instr, dst.name, src.name)
+    | ShiftRight((dst, src, n)) =>
+      open RegisterType;
+      open RegisterSpec;
+      let instr = Printf.sprintf("shr.%s", RegisterType.toString(dst.t));
+      Printf.sprintf("%s %s,%s,%d", instr, dst.name, src.name, n);
+    | ShiftLeft((dst, src, n)) =>
+      open RegisterType;
+      open RegisterSpec;
+      let instr = Printf.sprintf("shr.%s", RegisterType.toString(dst.t));
+      Printf.sprintf("%s %s,%s,%d", instr, dst.name, src.name, n);
+    };
+};*/
+
+type t('phantom) =
+  | Register(string, RegisterSpec.rType('phantom)): t(RegisterSpec.t('phantom))
+  | Literal('phantom): t('phantom)
+  /*| UnaryOperation(t('phantom), t('phantom));*/
+  | Convert(RegisterSpec.rType('phantom), t(_)): t(RegisterSpec.t('phantom));
+
+let test1 = Register("r", RegisterSpec.U32);
+
+let rec emit: type phantom. t(phantom) => phantom = (t) =>
+  switch t {
+  | Register(name, rType) =>
+      /*switch rType {
+      | U32 => 
+      | U64 => RegisterSpec.{name: "rd", t: rType}
+      };*/
+      RegisterSpec.{name: "r", t: rType}
+  | Literal(value) => value
+  | Convert(rtype, src) =>
+      let x = emit(src);
+      /*let rv: type phantom'. t(phantom') => string = (src) => {
+        Printf.sprintf("cvt %s,%s;", emit(dst), emit(src))
+      };*/
+      RegisterSpec.{name: "rd", t: rtype}
+  | _ => raise(Failure("Invalid parameters"));
+  };
+
+let test2 = Convert(RegisterSpec.U64, test1);
+
+let test3 = emit(test1);
+/*module OperandSpec = {
     type t =
-      | RegisterSpaceDeclaration((RegisterType.t, int, string))
-      | AddressSizeDeclaration(int);
+      | Register(RegisterSpec.t)
+      | Literal(int);
     let emit = (t) =>
       switch t {
-      | RegisterSpaceDeclaration((regType, sz, name)) =>
-        let sz = string_of_int(sz);
-        ".reg ." ++ (RegisterType.toString(regType) ++ (" %" ++ (name ++ ("<" ++ (sz ++ ">")))))
-      | AddressSizeDeclaration(n) =>
-        let n = string_of_int(n);
-        ".address_size " ++ n
+      | Register(spec) => RegisterSpec.emit(spec)
+      | Literal(n) => string_of_int(n)
       };
   };
-  /* an operation that operates on 1 register and stores its result in another,
-     but may take other non-register arguments */
-  module UnaryOperation = {
-    /* keep in mind that PTX assembly syntax is [instr.dstType.srcType dst, src] */
+
+  module Operation = {
+    module PseudoOperation = {
+      type t =
+        | RegisterSpaceDeclaration((RegisterType.t, int, string))
+        | AddressSizeDeclaration(int);
+      let emit = (t) =>
+        switch t {
+        | RegisterSpaceDeclaration((regType, sz, name)) =>
+          let sz = string_of_int(sz);
+          ".reg ."
+          ++ (
+            RegisterType.toString(regType)
+            ++ (" %" ++ (name ++ ("<" ++ (sz ++ ">"))))
+          )
+        | AddressSizeDeclaration(n) =>
+          let n = string_of_int(n);
+          ".address_size " ++ n
+        };
+    };
+    /* an operation that operates on 1 register and stores its result in another,
+       but may take other non-register arguments */
+    module UnaryOperation = {
+      /* keep in mind that PTX assembly syntax is [instr.dstType.srcType dst, src] */
+      type t =
+        | Convert((RegisterSpec.t, RegisterSpec.t))
+        | ShiftRight((RegisterSpec.t, RegisterSpec.t, int))
+        | ShiftLeft((RegisterSpec.t, RegisterSpec.t, int));
+      let rec emit = (t) =>
+        switch t {
+        | Convert((dst, src)) =>
+          open RegisterType;
+          let instr =
+            "cvt."
+            ++ (
+              RegisterType.toString(dst.t)
+              ++ ("." ++ RegisterType.toString(src.t))
+            );
+          RegisterSpec.(instr ++ (" %" ++ (dst.name ++ (" %" ++ src.name))))
+        | ShiftRight((dst, src, n)) =>
+          open RegisterType;
+          let instr = "shr." ++ RegisterType.toString(dst.t);
+          let n = string_of_int(n);
+          RegisterSpec.(
+            instr ++ (" %" ++ (dst.name ++ (", %" ++ (src.name ++ (", " ++ n)))))
+          )
+        | ShiftLeft((dst, src, n)) =>
+          open RegisterType;
+          let instr = "shl." ++ RegisterType.toString(dst.t);
+          let n = string_of_int(n);
+          RegisterSpec.(
+            instr ++ (" %" ++ (dst.name ++ (", %" ++ (src.name ++ (", " ++ n)))))
+          )
+        };
+    };
     type t =
-      | Convert((RegisterSpec.t, RegisterSpec.t))
-      | ShiftRight((RegisterSpec.t, RegisterSpec.t, int))
-      | ShiftLeft((RegisterSpec.t, RegisterSpec.t, int));
-    /* Sequence(lst, fst) is a special constructor for a block of unary
-        instructions. E.g.
-           Sequence(
-               ShiftLeft(
-                   {name: "rd1", t: U64},
-                   {name: "rd0", t: U64},
-                   32),
-               Sequence(
-                   Convert(
-                       {name: "rd0", t: U64},
-                       {name: "r0", t: U32}),
-                   Nop))
-       should have the type [t (RegisterType.t u64) (RegisterType.t u32)]
-       and should emit the assembly code
-           cvt.u64.u32 %rd0, r0;
-           shl.u64     %rd1, %rd0, 32; */
-    /*| Nop: t 'dst 'src
-      | Sequence (t 'dst 'src, t 'src 'src): t (t 'dst 'src) (t 'src 'src);*/
+      | Pseudo(PseudoOperation.t)
+      | Unary(UnaryOperation.t);
+    let emit = (t) =>
+      switch t {
+      | Pseudo(x) => PseudoOperation.emit(x)
+      | Unary(x) => UnaryOperation.emit(x)
+      };
+  };
+  /*type reg('t) = string;
+
+    type t('dst, 'src) =
+      | Convert((reg('dst), reg('src)))
+      | Sequence((t('dst, 'a), t('a, 'src)));
+
     let rec emit = (t) =>
       switch t {
-      | Convert((dst, src)) =>
-        open RegisterType;
-        let instr =
-          "cvt." ++ (RegisterType.toString(dst.t) ++ ("." ++ RegisterType.toString(src.t)));
-        RegisterSpec.(instr ++ (" %" ++ (dst.name ++ (" %" ++ src.name))))
-      | ShiftRight((dst, src, n)) =>
-        open RegisterType;
-        let instr = "shr." ++ RegisterType.toString(dst.t);
-        let n = string_of_int(n);
-        RegisterSpec.(instr ++ (" %" ++ (dst.name ++ (", %" ++ (src.name ++ (", " ++ n))))))
-      | ShiftLeft((dst, src, n)) =>
-        open RegisterType;
-        let instr = "shl." ++ RegisterType.toString(dst.t);
-        let n = string_of_int(n);
-        RegisterSpec.(instr ++ (" %" ++ (dst.name ++ (", %" ++ (src.name ++ (", " ++ n))))))
-      };
-  };
-  type t =
-    | Pseudo(PseudoOperation.t)
-    | Unary(UnaryOperation.t);
-  let emit = (t) =>
-    switch t {
-    | Pseudo(x) => PseudoOperation.emit(x)
-    | Unary(x) => UnaryOperation.emit(x)
-    };
-};
-
-/*module Declaration = {
-    type t =
-      | Kernel(string, list (RegisterType.t 'a, string), list (Operation.t 'b)): t;
-
-    let emit t =>
-      switch t {
-      | Kernel(name, params, operations) =>
-          let params = {
-            let stringifyParameter (t, n) => {
-              let t = RegisterType.toString t;
-              ".param ." ^ t ^ " _Z6" ^ name ^ "Pic_param_" ^ n
-            };
-            List.fold_left
-              (fun acc p => acc ^ ",\n\t" ^ stringifyParameter p)
-              ("\t" ^ stringifyParameter (List.hd params))
-              (List.tl params)
-          };
-          ".visible .entry _Z6" ^ name ^ "pic(\n" ^ params ^ ")\n{\n" ^ operations ^ "\n}"
-      };
-  };*/
-/*type t = list Operation.t;*/
-type reg('t) = string;
-
-type t('dst, 'src) =
-  | Convert((reg('dst), reg('src)))
-  /*| ShiftRight(reg 'dst, reg 'src, int)
-    | ShiftLeft(reg 'dst, reg 'src, int)*/
-  | Sequence((t('dst, 'a), t('a, 'src)));
-
-let rec emit = (t) =>
-  switch t {
-  | Convert((dst, src)) => "convert " ++ (dst ++ (", " ++ src))
-  | Sequence((cur, prev)) =>
-    let prev = emit(prev);
-    let cur = emit(cur);
-    "Hello, world!"
-  };
+      | Convert((dst, src)) => "convert " ++ (dst ++ (", " ++ src))
+      | Sequence((cur, prev)) =>
+        let prev = emit(prev);
+        let cur = emit(cur);
+        "Hello, world!"
+      };*/*/
