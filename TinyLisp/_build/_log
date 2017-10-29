@@ -1,0 +1,46 @@
+### Starting build.
+# Target: TinyLisp.ml.depends, tags: { extension:ml, file:TinyLisp.ml, ocaml, ocamldep, quiet, traverse }
+ocamlfind ocamldep -modules TinyLisp.ml > TinyLisp.ml.depends
+# Target: BasicSExp.ml.depends, tags: { extension:ml, file:BasicSExp.ml, ocaml, ocamldep, quiet, traverse }
+ocamlfind ocamldep -modules BasicSExp.ml > BasicSExp.ml.depends # cached
+# Target: BasicSExp.cmo, tags: { byte, compile, extension:cmo, extension:ml, file:BasicSExp.cmo, file:BasicSExp.ml, implem, ocaml, quiet, traverse }
+ocamlfind ocamlc -c -o BasicSExp.cmo BasicSExp.ml # cached
+# Target: tinyLispLexer.mll, tags: { extension:mll, file:tinyLispLexer.mll, lexer, ocaml, ocamllex, quiet, traverse }
+/home/chrismamo1/.opam/4.04.1/bin/ocamllex.opt -q tinyLispLexer.mll # cached
+# Target: tinyLispLexer.ml.depends, tags: { extension:ml, file:tinyLispLexer.ml, ocaml, ocamldep, quiet, traverse }
+ocamlfind ocamldep -modules tinyLispLexer.ml > tinyLispLexer.ml.depends # cached
+# Target: tinyLispParser.mly.depends, tags: { extension:mly, file:tinyLispParser.mly, infer, menhir_ocamldep, ocaml, ocamldep, quiet, traverse }
+menhir --raw-depend --ocamldep 'ocamlfind ocamldep -modules' tinyLispParser.mly > tinyLispParser.mly.depends # cached
+# Target: tinyLispParser.mly, tags: { byte, compile, extension:ml, extension:mly, file:tinyLispParser.ml, file:tinyLispParser.mly, infer, menhir, ocaml, parser, quiet, traverse }
+menhir --ocamlc 'ocamlfind ocamlc' --infer tinyLispParser.mly # cached
+# Target: tinyLispParser.mli.depends, tags: { extension:mli, file:tinyLispParser.mli, ocaml, ocamldep, quiet, traverse }
+ocamlfind ocamldep -modules tinyLispParser.mli > tinyLispParser.mli.depends # cached
+# Target: tinyLispParser.cmi, tags: { byte, compile, extension:mli, file:tinyLispParser.mli, interf, ocaml, quiet, traverse }
+ocamlfind ocamlc -c -o tinyLispParser.cmi tinyLispParser.mli # cached
+# Target: tinyLispLexer.cmo, tags: { byte, compile, extension:cmo, extension:ml, file:tinyLispLexer.cmo, file:tinyLispLexer.ml, implem, ocaml, quiet, traverse }
+ocamlfind ocamlc -c -o tinyLispLexer.cmo tinyLispLexer.ml # cached
+# Target: TinyLisp.cmo, tags: { byte, compile, extension:cmo, extension:ml, file:TinyLisp.cmo, file:TinyLisp.ml, implem, ocaml, quiet, traverse }
+ocamlfind ocamlc -c -o TinyLisp.cmo TinyLisp.ml
++ ocamlfind ocamlc -c -o TinyLisp.cmo TinyLisp.ml
+File "TinyLisp.ml", line 32, characters 4-903:
+Warning 8: this pattern-matching is not exhaustive.
+Here is an example of a case that is not matched:
+`Symb _
+# Target: tinyLispParser.ml.depends, tags: { extension:ml, file:tinyLispParser.ml, ocaml, ocamldep, quiet, traverse }
+ocamlfind ocamldep -modules tinyLispParser.ml > tinyLispParser.ml.depends
+# Target: BasicSExp.cmx, tags: { compile, extension:cmx, extension:ml, file:BasicSExp.cmx, file:BasicSExp.ml, implem, native, ocaml, quiet, traverse }
+ocamlfind ocamlopt -c -o BasicSExp.cmx BasicSExp.ml
+# Target: tinyLispParser.cmx, tags: { compile, extension:cmx, extension:ml, file:tinyLispParser.cmx, file:tinyLispParser.ml, implem, native, ocaml, quiet, traverse }
+ocamlfind ocamlopt -c -o tinyLispParser.cmx tinyLispParser.ml
+# Target: tinyLispLexer.cmx, tags: { compile, extension:cmx, extension:ml, file:tinyLispLexer.cmx, file:tinyLispLexer.ml, implem, native, ocaml, quiet, traverse }
+ocamlfind ocamlopt -c -o tinyLispLexer.cmx tinyLispLexer.ml
+# Target: TinyLisp.cmx, tags: { compile, extension:cmx, extension:ml, file:TinyLisp.cmx, file:TinyLisp.ml, implem, native, ocaml, quiet, traverse }
+ocamlfind ocamlopt -c -o TinyLisp.cmx TinyLisp.ml
++ ocamlfind ocamlopt -c -o TinyLisp.cmx TinyLisp.ml
+File "TinyLisp.ml", line 32, characters 4-903:
+Warning 8: this pattern-matching is not exhaustive.
+Here is an example of a case that is not matched:
+`Symb _
+# Target: TinyLisp.native, tags: { dont_link_with, extension:native, file:TinyLisp.native, link, native, ocaml, program, quiet, traverse }
+ocamlfind ocamlopt -linkpkg BasicSExp.cmx tinyLispParser.cmx tinyLispLexer.cmx TinyLisp.cmx -o TinyLisp.native
+# Compilation successful.
