@@ -82,7 +82,7 @@ File "AsmGen.re", line 178, characters 54-59:
 Warning 40: rType was selected from type Ptx.RegisterSpec.t.
 It is not visible in the current scope, and will not 
 be selected if the type becomes unknown.
-File "AsmGen.re", line 95, characters 0-2745:
+File "AsmGen.re", line 95, characters 0-2741:
 Warning 8: this pattern-matching is not exhaustive.
 Here is an example of a case that is not matched:
 (SExp _|Func (_, _, _)|Binding (_, _, _))
@@ -165,7 +165,7 @@ File "AsmGen.re", line 178, characters 54-59:
 Warning 40: rType was selected from type Ptx.RegisterSpec.t.
 It is not visible in the current scope, and will not 
 be selected if the type becomes unknown.
-File "AsmGen.re", line 95, characters 0-2745:
+File "AsmGen.re", line 95, characters 0-2741:
 Warning 8: this pattern-matching is not exhaustive.
 Here is an example of a case that is not matched:
 (SExp _|Func (_, _, _)|Binding (_, _, _))
