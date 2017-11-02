@@ -89,14 +89,15 @@ switch prog {
     let sec2Label = Ptx.generateLabel();
     switch cond {
     | (Some({Ptx.RegisterSpec.rType: Pred} as predReg), instrs) =>
+        let (_, sec2) = sec2;
         let body =
           [ instrs
           , [ `Branch(Some(predReg), sec2Label) ]
           , snd(sec1)
           , [`Branch(None, endLabel) ]
-          , [`Label(sec2Label)]
-          , snd(sec2)
-          , [ `Label(endLabel) ]
+          , [`Label(sec2Label, List.hd(sec2))]
+          , List.tl(sec2)
+          , [ `Label(endLabel, `Nop) ]
           ];
         let body = List.concat(body);
         List.map(Ptx.Statement.Instruction.emit, body);

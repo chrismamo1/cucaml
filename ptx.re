@@ -244,7 +244,7 @@ module Statement = {
       | `Call(RegisterSpec.t, string, list(OperandSpec.t))
       | `Convert(RegisterSpec.t, OperandSpec.t)
       | `ConvertAddress(StateSpace.t, RegisterSpec.t, OperandSpec.t)
-      | `Label(string)
+      | `Label(string, t)
       | `Return
       | `ShiftRight(RegisterSpec.t, OperandSpec.t, OperandSpec.t)
       | `ShiftLeft(RegisterSpec.t, OperandSpec.t, OperandSpec.t)
@@ -254,6 +254,7 @@ module Statement = {
       | `Multiply(RegisterSpec.t, OperandSpec.t, OperandSpec.t)
       | `MultiplyAndAdd(RegisterSpec.t, OperandSpec.t, OperandSpec.t, OperandSpec.t)
       | `Move(RegisterSpec.t, OperandSpec.t)
+      | `Nop
       ];
 
     let rec emit(t: [> t]) =
@@ -311,8 +312,8 @@ module Statement = {
             , RegisterType.emit(dst.rType)
             , RegisterSpec.emit(dst)
             , OperandSpec.emit(src))
-      | `Label(lName) =>
-          Printf.sprintf("%s:", lName)
+      | `Label(lName, t) =>
+          Printf.sprintf("%s:\t%s", lName, emit(t))
       | `Return =>
           "ret"
       | `ShiftRight(dst, src, n) =>
@@ -422,6 +423,8 @@ module Statement = {
             , RegisterType.emit(dst.rType)
             , RegisterSpec.emit(dst)
             , OperandSpec.emit(src))
+      | `Nop =>
+          "nop"
       | _ =>
           raise(Invalid_argument("Can't emit that, is it an instruction?"))
       };
