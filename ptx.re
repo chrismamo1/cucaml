@@ -382,6 +382,7 @@ module Statement = {
           let mods = {
             open RegisterType;
             switch (dst.rType, OperandSpec.getType(factor1)) {
+            | (F64, F64) => ""
             | (a, b) when a == b => ".lo"
             | (U64, U32)
             | (S64, S32) => ".wide"
