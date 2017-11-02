@@ -60,57 +60,57 @@ File "AsmGen.re", line 101, characters 8-233:
 Warning 8: this pattern-matching is not exhaustive.
 Here is an example of a case that is not matched:
 []
-File "AsmGen.re", line 129, characters 37-41:
+File "AsmGen.re", line 130, characters 37-41:
 Warning 40: Pred was selected from type Ptx.RegisterType.t.
 It is not visible in the current scope, and will not 
 be selected if the type becomes unknown.
-File "AsmGen.re", line 133, characters 28-33:
+File "AsmGen.re", line 134, characters 28-33:
 Warning 40: rType was selected from type Ptx.RegisterSpec.t.
 It is not visible in the current scope, and will not 
 be selected if the type becomes unknown.
-File "AsmGen.re", line 134, characters 34-39:
+File "AsmGen.re", line 135, characters 34-39:
 Warning 40: rType was selected from type Ptx.RegisterSpec.t.
 It is not visible in the current scope, and will not 
 be selected if the type becomes unknown.
-File "AsmGen.re", line 154, characters 8-54:
+File "AsmGen.re", line 155, characters 8-54:
 Warning 10: this expression should have type unit.
-File "AsmGen.re", line 208, characters 38-41:
+File "AsmGen.re", line 209, characters 38-41:
 Warning 40: F64 was selected from type Ptx.RegisterType.t.
 It is not visible in the current scope, and will not 
 be selected if the type becomes unknown.
-File "AsmGen.re", line 209, characters 45-50:
+File "AsmGen.re", line 210, characters 45-50:
 Warning 40: rType was selected from type Ptx.RegisterSpec.t.
 It is not visible in the current scope, and will not 
 be selected if the type becomes unknown.
-File "AsmGen.re", line 212, characters 38-41:
+File "AsmGen.re", line 213, characters 38-41:
 Warning 40: S64 was selected from type Ptx.RegisterType.t.
 It is not visible in the current scope, and will not 
 be selected if the type becomes unknown.
-File "AsmGen.re", line 213, characters 43-48:
+File "AsmGen.re", line 214, characters 43-48:
 Warning 40: rType was selected from type Ptx.RegisterSpec.t.
 It is not visible in the current scope, and will not 
 be selected if the type becomes unknown.
-File "AsmGen.re", line 216, characters 38-40:
+File "AsmGen.re", line 217, characters 38-40:
 Warning 40: S8 was selected from type Ptx.RegisterType.t.
 It is not visible in the current scope, and will not 
 be selected if the type becomes unknown.
-File "AsmGen.re", line 217, characters 54-59:
+File "AsmGen.re", line 218, characters 54-59:
 Warning 40: rType was selected from type Ptx.RegisterSpec.t.
 It is not visible in the current scope, and will not 
 be selected if the type becomes unknown.
-File "AsmGen.re", line 121, characters 0-3262:
+File "AsmGen.re", line 121, characters 0-3300:
 Warning 8: this pattern-matching is not exhaustive.
 Here is an example of a case that is not matched:
 (SExp _|Func (_, _, _)|Binding (_, _, _))
-File "AsmGen.re", line 228, characters 6-27:
+File "AsmGen.re", line 229, characters 6-27:
 Warning 8: this pattern-matching is not exhaustive.
 Here is an example of a case that is not matched:
 (None, _)
-File "AsmGen.re", line 229, characters 38-43:
+File "AsmGen.re", line 230, characters 38-43:
 Warning 40: Ret64 was selected from type Ptx.RegisterType.t.
 It is not visible in the current scope, and will not 
 be selected if the type becomes unknown.
-File "AsmGen.re", line 237, characters 59-64:
+File "AsmGen.re", line 238, characters 59-64:
 Warning 40: rType was selected from type Ptx.RegisterSpec.t.
 It is not visible in the current scope, and will not 
 be selected if the type becomes unknown.
@@ -120,9 +120,9 @@ File "AsmGen.re", line 45, characters 6-9:
 Warning 26: unused variable bd0.
 File "AsmGen.re", line 46, characters 6-9:
 Warning 26: unused variable bd1.
-File "AsmGen.re", line 166, characters 14-15:
+File "AsmGen.re", line 167, characters 14-15:
 Warning 11: this match case is unused.
-File "AsmGen.re", line 188, characters 8-14:
+File "AsmGen.re", line 189, characters 8-14:
 Warning 26: unused variable pRegs'.
 # Target: ptx.cmx, tags: { compile, extension:cmx, extension:re, file:ptx.cmx, file:ptx.re, implem, native, ocaml, quiet }
 ocamlfind ocamlopt -c -I TinyLisp -pp 'refmt --print binary' -o ptx.cmx -intf-suffix .rei -impl ptx.re # cached
@@ -159,57 +159,57 @@ File "AsmGen.re", line 101, characters 8-233:
 Warning 8: this pattern-matching is not exhaustive.
 Here is an example of a case that is not matched:
 []
-File "AsmGen.re", line 129, characters 37-41:
+File "AsmGen.re", line 130, characters 37-41:
 Warning 40: Pred was selected from type Ptx.RegisterType.t.
 It is not visible in the current scope, and will not 
 be selected if the type becomes unknown.
-File "AsmGen.re", line 133, characters 28-33:
+File "AsmGen.re", line 134, characters 28-33:
 Warning 40: rType was selected from type Ptx.RegisterSpec.t.
 It is not visible in the current scope, and will not 
 be selected if the type becomes unknown.
-File "AsmGen.re", line 134, characters 34-39:
+File "AsmGen.re", line 135, characters 34-39:
 Warning 40: rType was selected from type Ptx.RegisterSpec.t.
 It is not visible in the current scope, and will not 
 be selected if the type becomes unknown.
-File "AsmGen.re", line 154, characters 8-54:
+File "AsmGen.re", line 155, characters 8-54:
 Warning 10: this expression should have type unit.
-File "AsmGen.re", line 208, characters 38-41:
+File "AsmGen.re", line 209, characters 38-41:
 Warning 40: F64 was selected from type Ptx.RegisterType.t.
 It is not visible in the current scope, and will not 
 be selected if the type becomes unknown.
-File "AsmGen.re", line 209, characters 45-50:
+File "AsmGen.re", line 210, characters 45-50:
 Warning 40: rType was selected from type Ptx.RegisterSpec.t.
 It is not visible in the current scope, and will not 
 be selected if the type becomes unknown.
-File "AsmGen.re", line 212, characters 38-41:
+File "AsmGen.re", line 213, characters 38-41:
 Warning 40: S64 was selected from type Ptx.RegisterType.t.
 It is not visible in the current scope, and will not 
 be selected if the type becomes unknown.
-File "AsmGen.re", line 213, characters 43-48:
+File "AsmGen.re", line 214, characters 43-48:
 Warning 40: rType was selected from type Ptx.RegisterSpec.t.
 It is not visible in the current scope, and will not 
 be selected if the type becomes unknown.
-File "AsmGen.re", line 216, characters 38-40:
+File "AsmGen.re", line 217, characters 38-40:
 Warning 40: S8 was selected from type Ptx.RegisterType.t.
 It is not visible in the current scope, and will not 
 be selected if the type becomes unknown.
-File "AsmGen.re", line 217, characters 54-59:
+File "AsmGen.re", line 218, characters 54-59:
 Warning 40: rType was selected from type Ptx.RegisterSpec.t.
 It is not visible in the current scope, and will not 
 be selected if the type becomes unknown.
-File "AsmGen.re", line 121, characters 0-3262:
+File "AsmGen.re", line 121, characters 0-3300:
 Warning 8: this pattern-matching is not exhaustive.
 Here is an example of a case that is not matched:
 (SExp _|Func (_, _, _)|Binding (_, _, _))
-File "AsmGen.re", line 228, characters 6-27:
+File "AsmGen.re", line 229, characters 6-27:
 Warning 8: this pattern-matching is not exhaustive.
 Here is an example of a case that is not matched:
 (None, _)
-File "AsmGen.re", line 229, characters 38-43:
+File "AsmGen.re", line 230, characters 38-43:
 Warning 40: Ret64 was selected from type Ptx.RegisterType.t.
 It is not visible in the current scope, and will not 
 be selected if the type becomes unknown.
-File "AsmGen.re", line 237, characters 59-64:
+File "AsmGen.re", line 238, characters 59-64:
 Warning 40: rType was selected from type Ptx.RegisterSpec.t.
 It is not visible in the current scope, and will not 
 be selected if the type becomes unknown.
@@ -219,14 +219,14 @@ File "AsmGen.re", line 45, characters 6-9:
 Warning 26: unused variable bd0.
 File "AsmGen.re", line 46, characters 6-9:
 Warning 26: unused variable bd1.
-File "AsmGen.re", line 166, characters 14-15:
+File "AsmGen.re", line 167, characters 14-15:
 Warning 11: this match case is unused.
-File "AsmGen.re", line 188, characters 8-14:
+File "AsmGen.re", line 189, characters 8-14:
 Warning 26: unused variable pRegs'.
 # Target: CudaArray.cmx, tags: { compile, extension:cmx, extension:ml, file:CudaArray.cmx, file:CudaArray.ml, implem, native, ocaml, quiet }
-ocamlfind ocamlopt -c -I TinyLisp -o CudaArray.cmx CudaArray.ml # cached
+ocamlfind ocamlopt -c -I TinyLisp -o CudaArray.cmx CudaArray.ml
 # Target: test.cmx, tags: { compile, extension:cmx, extension:ml, file:test.cmx, file:test.ml, implem, native, ocaml, quiet }
-ocamlfind ocamlopt -c -I TinyLisp -o test.cmx test.ml # cached
+ocamlfind ocamlopt -c -I TinyLisp -o test.cmx test.ml
 # Target: test.native, tags: { dont_link_with, extension:native, file:test.native, link, native, ocaml, program, quiet }
 ocamlfind ocamlopt ../lib/camlCuda.o '-cclib=-lcuda' -linkpkg -I TinyLisp TinyLisp/BasicSExp.cmx TinyLisp/tinyLispParser.cmx TinyLisp/tinyLispLexer.cmx TinyLisp/TinyLisp.cmx ptx.cmx AsmGen.cmx CudaArray.cmx test.cmx -o test.native
 # Compilation successful.
