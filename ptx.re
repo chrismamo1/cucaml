@@ -249,6 +249,7 @@ module Statement = {
       | `ShiftRight(RegisterSpec.t, OperandSpec.t, OperandSpec.t)
       | `ShiftLeft(RegisterSpec.t, OperandSpec.t, OperandSpec.t)
       | `SetPredicate(comparison, RegisterSpec.t, OperandSpec.t, OperandSpec.t)
+      | `SquareRoot(RegisterSpec.t, OperandSpec.t)
       | `Load(StateSpace.t, RegisterSpec.t, OperandSpec.t)
       | `Store(StateSpace.t, OperandSpec.t, OperandSpec.t)
       | `Multiply(RegisterSpec.t, OperandSpec.t, OperandSpec.t)
@@ -362,6 +363,21 @@ module Statement = {
           raise(
             Invalid_argument(
               "SetPredicate must take a predicate register as the destination and the types of the operands must match"))
+      | `SquareRoot(dst, src) =>
+          open RegisterSpec;
+          let mods = {
+            open RegisterType;
+            switch (dst.rType, OperandSpec.getType(factor1)) {
+            | (F64, F64) => ""
+            | _ => raise(Invalid_argument("invalid register types for sqrt"))
+            }
+          };
+          Printf.sprintf(
+              "sqrt%s%s\t%s,%s"
+            , mods
+            , RegisterType.emit(OperandSpec.getType(dst))
+            , RegisterSpec.emit(dst)
+            , OperandSpec.emit(srt))
       | `Load(sSpace, dst, src) =>
           open RegisterSpec;
           Printf.sprintf(
