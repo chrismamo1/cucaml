@@ -189,7 +189,7 @@ let compileProgram(src) = {
             (decl) =>
               /* don't want to declare the return or parameter */
               switch decl {
-              | `Declaration(_, _, "%rvald0", _)
+              /*| `Declaration(_, _, "%rvald0", _)*/
               | `Declaration(_, _, "%fd9999", _) =>
                   false
               | _ => true
