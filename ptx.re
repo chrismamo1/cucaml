@@ -246,6 +246,7 @@ module Statement = {
       | `ConvertAddress(StateSpace.t, RegisterSpec.t, OperandSpec.t)
       | `Label(string, t)
       | `Return
+      | `ReverseSquareRoot(RegisterSpec.t, OperandSpec.t)
       | `ShiftRight(RegisterSpec.t, OperandSpec.t, OperandSpec.t)
       | `ShiftLeft(RegisterSpec.t, OperandSpec.t, OperandSpec.t)
       | `SetPredicate(comparison, RegisterSpec.t, OperandSpec.t, OperandSpec.t)
@@ -317,6 +318,21 @@ module Statement = {
           Printf.sprintf("%s:\t%s", lName, emit(t))
       | `Return =>
           "ret"
+      | `ReverseSquareRoot(dst, src) =>
+          open RegisterSpec;
+          let mods = {
+            open RegisterType;
+            switch (dst.rType, OperandSpec.getType(src)) {
+            | (F64, F64) => ""
+            | _ => raise(Invalid_argument("invalid register types for rsqrt"))
+            }
+          };
+          Printf.sprintf(
+              "rsqrt%s%s\t%s,%s"
+            , mods
+            , RegisterType.emit(dst.rType)
+            , RegisterSpec.emit(dst)
+            , OperandSpec.emit(src))
       | `ShiftRight(dst, src, n) =>
           let instr = {
             open RegisterSpec;
@@ -367,7 +383,7 @@ module Statement = {
           open RegisterSpec;
           let mods = {
             open RegisterType;
-            switch (dst.rType, OperandSpec.getType(factor1)) {
+            switch (dst.rType, OperandSpec.getType(src)) {
             | (F64, F64) => ""
             | _ => raise(Invalid_argument("invalid register types for sqrt"))
             }
@@ -375,9 +391,9 @@ module Statement = {
           Printf.sprintf(
               "sqrt%s%s\t%s,%s"
             , mods
-            , RegisterType.emit(OperandSpec.getType(dst))
+            , RegisterType.emit(dst.rType)
             , RegisterSpec.emit(dst)
-            , OperandSpec.emit(srt))
+            , OperandSpec.emit(src))
       | `Load(sSpace, dst, src) =>
           open RegisterSpec;
           Printf.sprintf(
@@ -565,6 +581,8 @@ module Statement = {
             | `Convert(a, b)
             | `ConvertAddress(_, a, b)
             | `Load(_, a, b)
+            | `ReverseSquareRoot(a, b)
+            | `SquareRoot(a, b)
             | `Store(_, `Register(a), b)
             | `Move(a, b) =>
                 [a]

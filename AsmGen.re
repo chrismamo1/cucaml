@@ -111,10 +111,21 @@ let intrinsics = {
     , target: RegisterType.F64
     , params: [ RegisterType.F64 ]
     , generate:
-        ([fd0], f1) =>
+        ([fd0], fd1) =>
           [ Statement.Instruction.(
               `SquareRoot(
-                  `Register(fd0)
+                  fd0
+                , `Register(fd1)))
+          ]
+    }
+  , { name: "rsqrt"
+    , target: RegisterType.F64
+    , params: [ RegisterType.F64 ]
+    , generate:
+        ([fd0], fd1) =>
+          [ Statement.Instruction.(
+              `ReverseSquareRoot(
+                  fd0
                 , `Register(fd1)))
           ]
     }
