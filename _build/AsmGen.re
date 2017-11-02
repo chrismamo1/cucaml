@@ -115,14 +115,18 @@ switch prog {
     switch cond {
     | (Some({Ptx.RegisterSpec.rType: Pred} as predReg), instrs) =>
         let (_, sec2) = sec2;
+        let nop = `Move(predReg, `Register(predReg));
+        let sec2h = try (List.hd(sec2)) {
+          | _ => nop
+        };
         let body =
           [ instrs
           , [ `Branch(Some(predReg), sec2Label) ]
           , snd(sec1)
           , [`Branch(None, endLabel) ]
-          , [`Label(sec2Label, List.hd(sec2))]
+          , [`Label(sec2Label, sec2h)]
           , try (List.tl(sec2)) { | _ => []}
-          , [ `Label(endLabel, `Move(predReg, `Register(predReg))) ]
+          , [ `Label(endLabel, nop) ]
           ];
         let body = List.concat(body);
         List.map(Ptx.Statement.Instruction.emit, body);
