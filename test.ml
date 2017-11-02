@@ -12,6 +12,12 @@ let () =
                (* (/ 4.0 3.0) (* 3.14159265358979 (* x (* x x))))))
       |}
   in
+  let arr' = [| 1.0; 2.0; 3.0 |] in
+  let _ =
+    CudaArray.mapFloatArrayInPlace
+      kSrc
+      arr'
+  in
   Printf.printf "kSrc:\n%s\n" kSrc;
   let cuStart = Unix.gettimeofday() in
   let () =
