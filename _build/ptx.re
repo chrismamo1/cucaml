@@ -323,7 +323,7 @@ module Statement = {
           let mods = {
             open RegisterType;
             switch (dst.rType, OperandSpec.getType(src)) {
-            | (F64, F64) => ""
+            | (F64, F64) => ".approx"
             | _ => raise(Invalid_argument("invalid register types for rsqrt"))
             }
           };
