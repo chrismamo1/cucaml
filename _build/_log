@@ -1,52 +1,42 @@
 ### Starting build.
 # Target: test.ml.depends, tags: { extension:ml, file:test.ml, ocaml, ocamldep, quiet }
-ocamlfind ocamldep -modules test.ml > test.ml.depends
+ocamlfind ocamldep -modules test.ml > test.ml.depends # cached
 # Target: CudaArray.mli.depends, tags: { extension:mli, file:CudaArray.mli, ocaml, ocamldep, quiet }
-ocamlfind ocamldep -modules CudaArray.mli > CudaArray.mli.depends
+ocamlfind ocamldep -modules CudaArray.mli > CudaArray.mli.depends # cached
 # Target: CudaArray.cmi, tags: { byte, compile, extension:mli, file:CudaArray.mli, interf, ocaml, quiet }
-ocamlfind ocamlc -c -I TinyLisp -o CudaArray.cmi CudaArray.mli
+ocamlfind ocamlc -c -I TinyLisp -o CudaArray.cmi CudaArray.mli # cached
 # Target: test.cmo, tags: { byte, compile, extension:cmo, extension:ml, file:test.cmo, file:test.ml, implem, ocaml, quiet }
-ocamlfind ocamlc -c -I TinyLisp -o test.cmo test.ml
+ocamlfind ocamlc -c -I TinyLisp -o test.cmo test.ml # cached
 # Target: CudaArray.ml.depends, tags: { extension:ml, file:CudaArray.ml, ocaml, ocamldep, quiet }
-ocamlfind ocamldep -modules CudaArray.ml > CudaArray.ml.depends
+ocamlfind ocamldep -modules CudaArray.ml > CudaArray.ml.depends # cached
 # Target: AsmGen.ml.depends, tags: { extension:re, file:AsmGen.re, ocaml, ocamldep, quiet }
 ocamlfind ocamldep -modules -pp 'refmt --print binary' -impl AsmGen.re | tee AsmGen.re.depends > AsmGen.ml.depends
 # Target: ptx.ml.depends, tags: { extension:re, file:ptx.re, ocaml, ocamldep, quiet }
-ocamlfind ocamldep -modules -pp 'refmt --print binary' -impl ptx.re | tee ptx.re.depends > ptx.ml.depends
-# Target: TinyLisp/TinyLisp.ml.depends, tags: { extension:ml, file:TinyLisp/TinyLisp.ml, ocaml, ocamldep, quiet }
-ocamlfind ocamldep -modules TinyLisp/TinyLisp.ml > TinyLisp/TinyLisp.ml.depends
-# Target: TinyLisp/BasicSExp.ml.depends, tags: { extension:ml, file:TinyLisp/BasicSExp.ml, ocaml, ocamldep, quiet }
-ocamlfind ocamldep -modules TinyLisp/BasicSExp.ml > TinyLisp/BasicSExp.ml.depends
-# Target: TinyLisp/tinyLispLexer.mll, tags: { extension:mll, file:TinyLisp/tinyLispLexer.mll, lexer, ocaml, ocamllex, quiet }
-/home/chrismamo1/.opam/4.04.1/bin/ocamllex.opt -q TinyLisp/tinyLispLexer.mll
-# Target: TinyLisp/tinyLispLexer.ml.depends, tags: { extension:ml, file:TinyLisp/tinyLispLexer.ml, ocaml, ocamldep, quiet }
-ocamlfind ocamldep -modules TinyLisp/tinyLispLexer.ml > TinyLisp/tinyLispLexer.ml.depends
-# Target: TinyLisp/tinyLispParser.mly.depends, tags: { extension:mly, file:TinyLisp/tinyLispParser.mly, infer, menhir_ocamldep, ocaml, ocamldep, quiet }
-menhir --raw-depend --ocamldep 'ocamlfind ocamldep -modules' TinyLisp/tinyLispParser.mly > TinyLisp/tinyLispParser.mly.depends
-# Target: TinyLisp/BasicSExp.cmo, tags: { byte, compile, extension:cmo, extension:ml, file:TinyLisp/BasicSExp.cmo, file:TinyLisp/BasicSExp.ml, implem, ocaml, quiet }
-ocamlfind ocamlc -c -I TinyLisp -o TinyLisp/BasicSExp.cmo TinyLisp/BasicSExp.ml
-# Target: TinyLisp/tinyLispParser.mly, tags: { byte, compile, extension:ml, extension:mly, file:TinyLisp/tinyLispParser.ml, file:TinyLisp/tinyLispParser.mly, infer, menhir, ocaml, parser, quiet }
-menhir --ocamlc 'ocamlfind ocamlc -I TinyLisp' --infer TinyLisp/tinyLispParser.mly
-# Target: TinyLisp/tinyLispParser.mli.depends, tags: { extension:mli, file:TinyLisp/tinyLispParser.mli, ocaml, ocamldep, quiet }
-ocamlfind ocamldep -modules TinyLisp/tinyLispParser.mli > TinyLisp/tinyLispParser.mli.depends
-# Target: TinyLisp/tinyLispParser.cmi, tags: { byte, compile, extension:mli, file:TinyLisp/tinyLispParser.mli, interf, ocaml, quiet }
-ocamlfind ocamlc -c -I TinyLisp -o TinyLisp/tinyLispParser.cmi TinyLisp/tinyLispParser.mli
-# Target: TinyLisp/tinyLispLexer.cmo, tags: { byte, compile, extension:cmo, extension:ml, file:TinyLisp/tinyLispLexer.cmo, file:TinyLisp/tinyLispLexer.ml, implem, ocaml, quiet }
-ocamlfind ocamlc -c -I TinyLisp -o TinyLisp/tinyLispLexer.cmo TinyLisp/tinyLispLexer.ml
+ocamlfind ocamldep -modules -pp 'refmt --print binary' -impl ptx.re | tee ptx.re.depends > ptx.ml.depends # cached
 # Target: ptx.cmo, tags: { byte, compile, extension:cmo, extension:re, file:ptx.cmo, file:ptx.re, implem, ocaml, quiet }
-ocamlfind ocamlc -c -I TinyLisp -pp 'refmt --print binary' -o ptx.cmo -intf-suffix .rei -impl ptx.re
-+ ocamlfind ocamlc -c -I TinyLisp -pp 'refmt --print binary' -o ptx.cmo -intf-suffix .rei -impl ptx.re
-File "ptx.re", line 338, characters 12-864:
-Warning 8: this pattern-matching is not exhaustive.
-Here is an example of a case that is not matched:
-((`LessThan, Ret64)|(`LessThanOrEqual, Ret64)|(`GreaterThan, Ret64)|
-(`GreaterThanOrEqual, Ret64))
-File "ptx.re", line 515, characters 8-9:
-Warning 11: this match case is unused.
-File "ptx.re", line 567, characters 26-34:
-Warning 12: this sub-pattern is unused.
+ocamlfind ocamlc -c -I TinyLisp -pp 'refmt --print binary' -o ptx.cmo -intf-suffix .rei -impl ptx.re # cached
+# Target: TinyLisp/TinyLisp.ml.depends, tags: { extension:ml, file:TinyLisp/TinyLisp.ml, ocaml, ocamldep, quiet }
+ocamlfind ocamldep -modules TinyLisp/TinyLisp.ml > TinyLisp/TinyLisp.ml.depends # cached
+# Target: TinyLisp/BasicSExp.ml.depends, tags: { extension:ml, file:TinyLisp/BasicSExp.ml, ocaml, ocamldep, quiet }
+ocamlfind ocamldep -modules TinyLisp/BasicSExp.ml > TinyLisp/BasicSExp.ml.depends # cached
+# Target: TinyLisp/BasicSExp.cmo, tags: { byte, compile, extension:cmo, extension:ml, file:TinyLisp/BasicSExp.cmo, file:TinyLisp/BasicSExp.ml, implem, ocaml, quiet }
+ocamlfind ocamlc -c -I TinyLisp -o TinyLisp/BasicSExp.cmo TinyLisp/BasicSExp.ml # cached
+# Target: TinyLisp/tinyLispLexer.mll, tags: { extension:mll, file:TinyLisp/tinyLispLexer.mll, lexer, ocaml, ocamllex, quiet }
+/home/chrismamo1/.opam/4.04.1/bin/ocamllex.opt -q TinyLisp/tinyLispLexer.mll # cached
+# Target: TinyLisp/tinyLispLexer.ml.depends, tags: { extension:ml, file:TinyLisp/tinyLispLexer.ml, ocaml, ocamldep, quiet }
+ocamlfind ocamldep -modules TinyLisp/tinyLispLexer.ml > TinyLisp/tinyLispLexer.ml.depends # cached
+# Target: TinyLisp/tinyLispParser.mly.depends, tags: { extension:mly, file:TinyLisp/tinyLispParser.mly, infer, menhir_ocamldep, ocaml, ocamldep, quiet }
+menhir --raw-depend --ocamldep 'ocamlfind ocamldep -modules' TinyLisp/tinyLispParser.mly > TinyLisp/tinyLispParser.mly.depends # cached
+# Target: TinyLisp/tinyLispParser.mly, tags: { byte, compile, extension:ml, extension:mly, file:TinyLisp/tinyLispParser.ml, file:TinyLisp/tinyLispParser.mly, infer, menhir, ocaml, parser, quiet }
+menhir --ocamlc 'ocamlfind ocamlc -I TinyLisp' --infer TinyLisp/tinyLispParser.mly # cached
+# Target: TinyLisp/tinyLispParser.mli.depends, tags: { extension:mli, file:TinyLisp/tinyLispParser.mli, ocaml, ocamldep, quiet }
+ocamlfind ocamldep -modules TinyLisp/tinyLispParser.mli > TinyLisp/tinyLispParser.mli.depends # cached
+# Target: TinyLisp/tinyLispParser.cmi, tags: { byte, compile, extension:mli, file:TinyLisp/tinyLispParser.mli, interf, ocaml, quiet }
+ocamlfind ocamlc -c -I TinyLisp -o TinyLisp/tinyLispParser.cmi TinyLisp/tinyLispParser.mli # cached
+# Target: TinyLisp/tinyLispLexer.cmo, tags: { byte, compile, extension:cmo, extension:ml, file:TinyLisp/tinyLispLexer.cmo, file:TinyLisp/tinyLispLexer.ml, implem, ocaml, quiet }
+ocamlfind ocamlc -c -I TinyLisp -o TinyLisp/tinyLispLexer.cmo TinyLisp/tinyLispLexer.ml # cached
 # Target: TinyLisp/TinyLisp.cmo, tags: { byte, compile, extension:cmo, extension:ml, file:TinyLisp/TinyLisp.cmo, file:TinyLisp/TinyLisp.ml, implem, ocaml, quiet }
-ocamlfind ocamlc -c -I TinyLisp -o TinyLisp/TinyLisp.cmo TinyLisp/TinyLisp.ml
+ocamlfind ocamlc -c -I TinyLisp -o TinyLisp/TinyLisp.cmo TinyLisp/TinyLisp.ml # cached
 # Target: AsmGen.cmo, tags: { byte, compile, extension:cmo, extension:re, file:AsmGen.cmo, file:AsmGen.re, implem, ocaml, quiet }
 ocamlfind ocamlc -c -I TinyLisp -pp 'refmt --print binary' -o AsmGen.cmo -intf-suffix .rei -impl AsmGen.re
 + ocamlfind ocamlc -c -I TinyLisp -pp 'refmt --print binary' -o AsmGen.cmo -intf-suffix .rei -impl AsmGen.re
@@ -114,28 +104,18 @@ File "AsmGen.re", line 114, characters 14-15:
 Warning 11: this match case is unused.
 File "AsmGen.re", line 136, characters 8-14:
 Warning 26: unused variable pRegs'.
-# Target: TinyLisp/tinyLispParser.ml.depends, tags: { extension:ml, file:TinyLisp/tinyLispParser.ml, ocaml, ocamldep, quiet }
-ocamlfind ocamldep -modules TinyLisp/tinyLispParser.ml > TinyLisp/tinyLispParser.ml.depends
-# Target: TinyLisp/BasicSExp.cmx, tags: { compile, extension:cmx, extension:ml, file:TinyLisp/BasicSExp.cmx, file:TinyLisp/BasicSExp.ml, implem, native, ocaml, quiet }
-ocamlfind ocamlopt -c -I TinyLisp -o TinyLisp/BasicSExp.cmx TinyLisp/BasicSExp.ml
-# Target: TinyLisp/tinyLispParser.cmx, tags: { compile, extension:cmx, extension:ml, file:TinyLisp/tinyLispParser.cmx, file:TinyLisp/tinyLispParser.ml, implem, native, ocaml, quiet }
-ocamlfind ocamlopt -c -I TinyLisp -o TinyLisp/tinyLispParser.cmx TinyLisp/tinyLispParser.ml
-# Target: TinyLisp/tinyLispLexer.cmx, tags: { compile, extension:cmx, extension:ml, file:TinyLisp/tinyLispLexer.cmx, file:TinyLisp/tinyLispLexer.ml, implem, native, ocaml, quiet }
-ocamlfind ocamlopt -c -I TinyLisp -o TinyLisp/tinyLispLexer.cmx TinyLisp/tinyLispLexer.ml
 # Target: ptx.cmx, tags: { compile, extension:cmx, extension:re, file:ptx.cmx, file:ptx.re, implem, native, ocaml, quiet }
-ocamlfind ocamlopt -c -I TinyLisp -pp 'refmt --print binary' -o ptx.cmx -intf-suffix .rei -impl ptx.re
-+ ocamlfind ocamlopt -c -I TinyLisp -pp 'refmt --print binary' -o ptx.cmx -intf-suffix .rei -impl ptx.re
-File "ptx.re", line 338, characters 12-864:
-Warning 8: this pattern-matching is not exhaustive.
-Here is an example of a case that is not matched:
-((`LessThan, Ret64)|(`LessThanOrEqual, Ret64)|(`GreaterThan, Ret64)|
-(`GreaterThanOrEqual, Ret64))
-File "ptx.re", line 515, characters 8-9:
-Warning 11: this match case is unused.
-File "ptx.re", line 567, characters 26-34:
-Warning 12: this sub-pattern is unused.
+ocamlfind ocamlopt -c -I TinyLisp -pp 'refmt --print binary' -o ptx.cmx -intf-suffix .rei -impl ptx.re # cached
+# Target: TinyLisp/BasicSExp.cmx, tags: { compile, extension:cmx, extension:ml, file:TinyLisp/BasicSExp.cmx, file:TinyLisp/BasicSExp.ml, implem, native, ocaml, quiet }
+ocamlfind ocamlopt -c -I TinyLisp -o TinyLisp/BasicSExp.cmx TinyLisp/BasicSExp.ml # cached
+# Target: TinyLisp/tinyLispParser.ml.depends, tags: { extension:ml, file:TinyLisp/tinyLispParser.ml, ocaml, ocamldep, quiet }
+ocamlfind ocamldep -modules TinyLisp/tinyLispParser.ml > TinyLisp/tinyLispParser.ml.depends # cached
+# Target: TinyLisp/tinyLispParser.cmx, tags: { compile, extension:cmx, extension:ml, file:TinyLisp/tinyLispParser.cmx, file:TinyLisp/tinyLispParser.ml, implem, native, ocaml, quiet }
+ocamlfind ocamlopt -c -I TinyLisp -o TinyLisp/tinyLispParser.cmx TinyLisp/tinyLispParser.ml # cached
+# Target: TinyLisp/tinyLispLexer.cmx, tags: { compile, extension:cmx, extension:ml, file:TinyLisp/tinyLispLexer.cmx, file:TinyLisp/tinyLispLexer.ml, implem, native, ocaml, quiet }
+ocamlfind ocamlopt -c -I TinyLisp -o TinyLisp/tinyLispLexer.cmx TinyLisp/tinyLispLexer.ml # cached
 # Target: TinyLisp/TinyLisp.cmx, tags: { compile, extension:cmx, extension:ml, file:TinyLisp/TinyLisp.cmx, file:TinyLisp/TinyLisp.ml, implem, native, ocaml, quiet }
-ocamlfind ocamlopt -c -I TinyLisp -o TinyLisp/TinyLisp.cmx TinyLisp/TinyLisp.ml
+ocamlfind ocamlopt -c -I TinyLisp -o TinyLisp/TinyLisp.cmx TinyLisp/TinyLisp.ml # cached
 # Target: AsmGen.cmx, tags: { compile, extension:cmx, extension:re, file:AsmGen.cmx, file:AsmGen.re, implem, native, ocaml, quiet }
 ocamlfind ocamlopt -c -I TinyLisp -pp 'refmt --print binary' -o AsmGen.cmx -intf-suffix .rei -impl AsmGen.re
 + ocamlfind ocamlopt -c -I TinyLisp -pp 'refmt --print binary' -o AsmGen.cmx -intf-suffix .rei -impl AsmGen.re
@@ -204,9 +184,9 @@ Warning 11: this match case is unused.
 File "AsmGen.re", line 136, characters 8-14:
 Warning 26: unused variable pRegs'.
 # Target: CudaArray.cmx, tags: { compile, extension:cmx, extension:ml, file:CudaArray.cmx, file:CudaArray.ml, implem, native, ocaml, quiet }
-ocamlfind ocamlopt -c -I TinyLisp -o CudaArray.cmx CudaArray.ml
+ocamlfind ocamlopt -c -I TinyLisp -o CudaArray.cmx CudaArray.ml # cached
 # Target: test.cmx, tags: { compile, extension:cmx, extension:ml, file:test.cmx, file:test.ml, implem, native, ocaml, quiet }
-ocamlfind ocamlopt -c -I TinyLisp -o test.cmx test.ml
+ocamlfind ocamlopt -c -I TinyLisp -o test.cmx test.ml # cached
 # Target: test.native, tags: { dont_link_with, extension:native, file:test.native, link, native, ocaml, program, quiet }
 ocamlfind ocamlopt ../lib/camlCuda.o '-cclib=-lcuda' -linkpkg -I TinyLisp TinyLisp/BasicSExp.cmx TinyLisp/tinyLispParser.cmx TinyLisp/tinyLispLexer.cmx TinyLisp/TinyLisp.cmx ptx.cmx AsmGen.cmx CudaArray.cmx test.cmx -o test.native
 # Compilation successful.

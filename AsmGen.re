@@ -207,7 +207,7 @@ let compileProgram(src) = {
       open Directive;
       let params =
         [ `Declaration(StateSpace.Parameter, RegisterType.U64, "paramX", None)
-        , `Declaration(StateSpace.Parameter, RegisterType.U64, "sz", None)
+        /*, `Declaration(StateSpace.Parameter, RegisterType.U64, "sz", None)*/
         ];
       open Instruction;
       open RegisterSpec;
