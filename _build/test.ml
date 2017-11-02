@@ -1,6 +1,6 @@
 let () =
   Random.self_init();
-  let arr = Array.init 75_000_000 (fun _ -> Random.float 10.0) in
+  let arr = Array.init 100_000_000 (fun _ -> Random.float 10.0) in
   let arr1 = Array.copy arr in
   let arr2 = Array.copy arr in
   let kSrc =
