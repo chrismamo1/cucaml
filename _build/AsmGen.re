@@ -136,7 +136,7 @@ switch prog {
     let pRegs' = List.map((r) => `Register(r), pRegs);
     let call:list(Ptx.Statement.Instruction.t) = {
       open Ptx.Statement.Instruction;
-      func.generate(pRegs, tReg)
+      List.flatten(body) @ func.generate(pRegs, tReg)
       /*[ `Call(tReg, name, pRegs') ]*/
     };
     /*let body = List.flatten(body @ [ call ]);*/
