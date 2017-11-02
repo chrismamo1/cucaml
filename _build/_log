@@ -1,0 +1,188 @@
+### Starting build.
+# Target: test.ml.depends, tags: { extension:ml, file:test.ml, ocaml, ocamldep, quiet }
+ocamlfind ocamldep -modules test.ml > test.ml.depends # cached
+# Target: CudaArray.mli.depends, tags: { extension:mli, file:CudaArray.mli, ocaml, ocamldep, quiet }
+ocamlfind ocamldep -modules CudaArray.mli > CudaArray.mli.depends # cached
+# Target: CudaArray.cmi, tags: { byte, compile, extension:mli, file:CudaArray.mli, interf, ocaml, quiet }
+ocamlfind ocamlc -c -I TinyLisp -o CudaArray.cmi CudaArray.mli # cached
+# Target: test.cmo, tags: { byte, compile, extension:cmo, extension:ml, file:test.cmo, file:test.ml, implem, ocaml, quiet }
+ocamlfind ocamlc -c -I TinyLisp -o test.cmo test.ml # cached
+# Target: CudaArray.ml.depends, tags: { extension:ml, file:CudaArray.ml, ocaml, ocamldep, quiet }
+ocamlfind ocamldep -modules CudaArray.ml > CudaArray.ml.depends # cached
+# Target: AsmGen.ml.depends, tags: { extension:re, file:AsmGen.re, ocaml, ocamldep, quiet }
+ocamlfind ocamldep -modules -pp 'refmt --print binary' -impl AsmGen.re | tee AsmGen.re.depends > AsmGen.ml.depends
+# Target: ptx.ml.depends, tags: { extension:re, file:ptx.re, ocaml, ocamldep, quiet }
+ocamlfind ocamldep -modules -pp 'refmt --print binary' -impl ptx.re | tee ptx.re.depends > ptx.ml.depends # cached
+# Target: ptx.cmo, tags: { byte, compile, extension:cmo, extension:re, file:ptx.cmo, file:ptx.re, implem, ocaml, quiet }
+ocamlfind ocamlc -c -I TinyLisp -pp 'refmt --print binary' -o ptx.cmo -intf-suffix .rei -impl ptx.re # cached
+# Target: TinyLisp/TinyLisp.ml.depends, tags: { extension:ml, file:TinyLisp/TinyLisp.ml, ocaml, ocamldep, quiet }
+ocamlfind ocamldep -modules TinyLisp/TinyLisp.ml > TinyLisp/TinyLisp.ml.depends # cached
+# Target: TinyLisp/BasicSExp.ml.depends, tags: { extension:ml, file:TinyLisp/BasicSExp.ml, ocaml, ocamldep, quiet }
+ocamlfind ocamldep -modules TinyLisp/BasicSExp.ml > TinyLisp/BasicSExp.ml.depends # cached
+# Target: TinyLisp/BasicSExp.cmo, tags: { byte, compile, extension:cmo, extension:ml, file:TinyLisp/BasicSExp.cmo, file:TinyLisp/BasicSExp.ml, implem, ocaml, quiet }
+ocamlfind ocamlc -c -I TinyLisp -o TinyLisp/BasicSExp.cmo TinyLisp/BasicSExp.ml # cached
+# Target: TinyLisp/tinyLispLexer.mll, tags: { extension:mll, file:TinyLisp/tinyLispLexer.mll, lexer, ocaml, ocamllex, quiet }
+/home/chrismamo1/.opam/4.04.1/bin/ocamllex.opt -q TinyLisp/tinyLispLexer.mll # cached
+# Target: TinyLisp/tinyLispLexer.ml.depends, tags: { extension:ml, file:TinyLisp/tinyLispLexer.ml, ocaml, ocamldep, quiet }
+ocamlfind ocamldep -modules TinyLisp/tinyLispLexer.ml > TinyLisp/tinyLispLexer.ml.depends # cached
+# Target: TinyLisp/tinyLispParser.mly.depends, tags: { extension:mly, file:TinyLisp/tinyLispParser.mly, infer, menhir_ocamldep, ocaml, ocamldep, quiet }
+menhir --raw-depend --ocamldep 'ocamlfind ocamldep -modules' TinyLisp/tinyLispParser.mly > TinyLisp/tinyLispParser.mly.depends # cached
+# Target: TinyLisp/tinyLispParser.mly, tags: { byte, compile, extension:ml, extension:mly, file:TinyLisp/tinyLispParser.ml, file:TinyLisp/tinyLispParser.mly, infer, menhir, ocaml, parser, quiet }
+menhir --ocamlc 'ocamlfind ocamlc -I TinyLisp' --infer TinyLisp/tinyLispParser.mly # cached
+# Target: TinyLisp/tinyLispParser.mli.depends, tags: { extension:mli, file:TinyLisp/tinyLispParser.mli, ocaml, ocamldep, quiet }
+ocamlfind ocamldep -modules TinyLisp/tinyLispParser.mli > TinyLisp/tinyLispParser.mli.depends # cached
+# Target: TinyLisp/tinyLispParser.cmi, tags: { byte, compile, extension:mli, file:TinyLisp/tinyLispParser.mli, interf, ocaml, quiet }
+ocamlfind ocamlc -c -I TinyLisp -o TinyLisp/tinyLispParser.cmi TinyLisp/tinyLispParser.mli # cached
+# Target: TinyLisp/tinyLispLexer.cmo, tags: { byte, compile, extension:cmo, extension:ml, file:TinyLisp/tinyLispLexer.cmo, file:TinyLisp/tinyLispLexer.ml, implem, ocaml, quiet }
+ocamlfind ocamlc -c -I TinyLisp -o TinyLisp/tinyLispLexer.cmo TinyLisp/tinyLispLexer.ml # cached
+# Target: TinyLisp/TinyLisp.cmo, tags: { byte, compile, extension:cmo, extension:ml, file:TinyLisp/TinyLisp.cmo, file:TinyLisp/TinyLisp.ml, implem, ocaml, quiet }
+ocamlfind ocamlc -c -I TinyLisp -o TinyLisp/TinyLisp.cmo TinyLisp/TinyLisp.ml # cached
+# Target: AsmGen.cmo, tags: { byte, compile, extension:cmo, extension:re, file:AsmGen.cmo, file:AsmGen.re, implem, ocaml, quiet }
+ocamlfind ocamlc -c -I TinyLisp -pp 'refmt --print binary' -o AsmGen.cmo -intf-suffix .rei -impl AsmGen.re
++ ocamlfind ocamlc -c -I TinyLisp -pp 'refmt --print binary' -o AsmGen.cmo -intf-suffix .rei -impl AsmGen.re
+File "AsmGen.re", line 51, characters 8-218:
+Warning 8: this pattern-matching is not exhaustive.
+Here is an example of a case that is not matched:
+[]
+File "AsmGen.re", line 64, characters 8-191:
+Warning 8: this pattern-matching is not exhaustive.
+Here is an example of a case that is not matched:
+[]
+File "AsmGen.re", line 91, characters 37-41:
+Warning 40: Pred was selected from type Ptx.RegisterType.t.
+It is not visible in the current scope, and will not 
+be selected if the type becomes unknown.
+File "AsmGen.re", line 102, characters 8-54:
+Warning 10: this expression should have type unit.
+File "AsmGen.re", line 155, characters 38-41:
+Warning 40: F64 was selected from type Ptx.RegisterType.t.
+It is not visible in the current scope, and will not 
+be selected if the type becomes unknown.
+File "AsmGen.re", line 156, characters 45-50:
+Warning 40: rType was selected from type Ptx.RegisterSpec.t.
+It is not visible in the current scope, and will not 
+be selected if the type becomes unknown.
+File "AsmGen.re", line 159, characters 38-41:
+Warning 40: S64 was selected from type Ptx.RegisterType.t.
+It is not visible in the current scope, and will not 
+be selected if the type becomes unknown.
+File "AsmGen.re", line 160, characters 43-48:
+Warning 40: rType was selected from type Ptx.RegisterSpec.t.
+It is not visible in the current scope, and will not 
+be selected if the type becomes unknown.
+File "AsmGen.re", line 163, characters 38-40:
+Warning 40: S8 was selected from type Ptx.RegisterType.t.
+It is not visible in the current scope, and will not 
+be selected if the type becomes unknown.
+File "AsmGen.re", line 164, characters 54-59:
+Warning 40: rType was selected from type Ptx.RegisterSpec.t.
+It is not visible in the current scope, and will not 
+be selected if the type becomes unknown.
+File "AsmGen.re", line 83, characters 0-2579:
+Warning 8: this pattern-matching is not exhaustive.
+Here is an example of a case that is not matched:
+(SExp _|Func (_, _, _)|Binding (_, _, _))
+File "AsmGen.re", line 175, characters 6-27:
+Warning 8: this pattern-matching is not exhaustive.
+Here is an example of a case that is not matched:
+(None, _)
+File "AsmGen.re", line 176, characters 38-43:
+Warning 40: Ret64 was selected from type Ptx.RegisterType.t.
+It is not visible in the current scope, and will not 
+be selected if the type becomes unknown.
+File "AsmGen.re", line 184, characters 59-64:
+Warning 40: rType was selected from type Ptx.RegisterSpec.t.
+It is not visible in the current scope, and will not 
+be selected if the type becomes unknown.
+File "AsmGen.re", line 44, characters 6-8:
+Warning 26: unused variable p0.
+File "AsmGen.re", line 45, characters 6-9:
+Warning 26: unused variable bd0.
+File "AsmGen.re", line 46, characters 6-9:
+Warning 26: unused variable bd1.
+File "AsmGen.re", line 114, characters 14-15:
+Warning 11: this match case is unused.
+# Target: ptx.cmx, tags: { compile, extension:cmx, extension:re, file:ptx.cmx, file:ptx.re, implem, native, ocaml, quiet }
+ocamlfind ocamlopt -c -I TinyLisp -pp 'refmt --print binary' -o ptx.cmx -intf-suffix .rei -impl ptx.re # cached
+# Target: TinyLisp/BasicSExp.cmx, tags: { compile, extension:cmx, extension:ml, file:TinyLisp/BasicSExp.cmx, file:TinyLisp/BasicSExp.ml, implem, native, ocaml, quiet }
+ocamlfind ocamlopt -c -I TinyLisp -o TinyLisp/BasicSExp.cmx TinyLisp/BasicSExp.ml # cached
+# Target: TinyLisp/tinyLispParser.ml.depends, tags: { extension:ml, file:TinyLisp/tinyLispParser.ml, ocaml, ocamldep, quiet }
+ocamlfind ocamldep -modules TinyLisp/tinyLispParser.ml > TinyLisp/tinyLispParser.ml.depends # cached
+# Target: TinyLisp/tinyLispParser.cmx, tags: { compile, extension:cmx, extension:ml, file:TinyLisp/tinyLispParser.cmx, file:TinyLisp/tinyLispParser.ml, implem, native, ocaml, quiet }
+ocamlfind ocamlopt -c -I TinyLisp -o TinyLisp/tinyLispParser.cmx TinyLisp/tinyLispParser.ml # cached
+# Target: TinyLisp/tinyLispLexer.cmx, tags: { compile, extension:cmx, extension:ml, file:TinyLisp/tinyLispLexer.cmx, file:TinyLisp/tinyLispLexer.ml, implem, native, ocaml, quiet }
+ocamlfind ocamlopt -c -I TinyLisp -o TinyLisp/tinyLispLexer.cmx TinyLisp/tinyLispLexer.ml # cached
+# Target: TinyLisp/TinyLisp.cmx, tags: { compile, extension:cmx, extension:ml, file:TinyLisp/TinyLisp.cmx, file:TinyLisp/TinyLisp.ml, implem, native, ocaml, quiet }
+ocamlfind ocamlopt -c -I TinyLisp -o TinyLisp/TinyLisp.cmx TinyLisp/TinyLisp.ml # cached
+# Target: AsmGen.cmx, tags: { compile, extension:cmx, extension:re, file:AsmGen.cmx, file:AsmGen.re, implem, native, ocaml, quiet }
+ocamlfind ocamlopt -c -I TinyLisp -pp 'refmt --print binary' -o AsmGen.cmx -intf-suffix .rei -impl AsmGen.re
++ ocamlfind ocamlopt -c -I TinyLisp -pp 'refmt --print binary' -o AsmGen.cmx -intf-suffix .rei -impl AsmGen.re
+File "AsmGen.re", line 51, characters 8-218:
+Warning 8: this pattern-matching is not exhaustive.
+Here is an example of a case that is not matched:
+[]
+File "AsmGen.re", line 64, characters 8-191:
+Warning 8: this pattern-matching is not exhaustive.
+Here is an example of a case that is not matched:
+[]
+File "AsmGen.re", line 91, characters 37-41:
+Warning 40: Pred was selected from type Ptx.RegisterType.t.
+It is not visible in the current scope, and will not 
+be selected if the type becomes unknown.
+File "AsmGen.re", line 102, characters 8-54:
+Warning 10: this expression should have type unit.
+File "AsmGen.re", line 155, characters 38-41:
+Warning 40: F64 was selected from type Ptx.RegisterType.t.
+It is not visible in the current scope, and will not 
+be selected if the type becomes unknown.
+File "AsmGen.re", line 156, characters 45-50:
+Warning 40: rType was selected from type Ptx.RegisterSpec.t.
+It is not visible in the current scope, and will not 
+be selected if the type becomes unknown.
+File "AsmGen.re", line 159, characters 38-41:
+Warning 40: S64 was selected from type Ptx.RegisterType.t.
+It is not visible in the current scope, and will not 
+be selected if the type becomes unknown.
+File "AsmGen.re", line 160, characters 43-48:
+Warning 40: rType was selected from type Ptx.RegisterSpec.t.
+It is not visible in the current scope, and will not 
+be selected if the type becomes unknown.
+File "AsmGen.re", line 163, characters 38-40:
+Warning 40: S8 was selected from type Ptx.RegisterType.t.
+It is not visible in the current scope, and will not 
+be selected if the type becomes unknown.
+File "AsmGen.re", line 164, characters 54-59:
+Warning 40: rType was selected from type Ptx.RegisterSpec.t.
+It is not visible in the current scope, and will not 
+be selected if the type becomes unknown.
+File "AsmGen.re", line 83, characters 0-2579:
+Warning 8: this pattern-matching is not exhaustive.
+Here is an example of a case that is not matched:
+(SExp _|Func (_, _, _)|Binding (_, _, _))
+File "AsmGen.re", line 175, characters 6-27:
+Warning 8: this pattern-matching is not exhaustive.
+Here is an example of a case that is not matched:
+(None, _)
+File "AsmGen.re", line 176, characters 38-43:
+Warning 40: Ret64 was selected from type Ptx.RegisterType.t.
+It is not visible in the current scope, and will not 
+be selected if the type becomes unknown.
+File "AsmGen.re", line 184, characters 59-64:
+Warning 40: rType was selected from type Ptx.RegisterSpec.t.
+It is not visible in the current scope, and will not 
+be selected if the type becomes unknown.
+File "AsmGen.re", line 44, characters 6-8:
+Warning 26: unused variable p0.
+File "AsmGen.re", line 45, characters 6-9:
+Warning 26: unused variable bd0.
+File "AsmGen.re", line 46, characters 6-9:
+Warning 26: unused variable bd1.
+File "AsmGen.re", line 114, characters 14-15:
+Warning 11: this match case is unused.
+# Target: CudaArray.cmx, tags: { compile, extension:cmx, extension:ml, file:CudaArray.cmx, file:CudaArray.ml, implem, native, ocaml, quiet }
+ocamlfind ocamlopt -c -I TinyLisp -o CudaArray.cmx CudaArray.ml # cached
+# Target: test.cmx, tags: { compile, extension:cmx, extension:ml, file:test.cmx, file:test.ml, implem, native, ocaml, quiet }
+ocamlfind ocamlopt -c -I TinyLisp -o test.cmx test.ml # cached
+# Target: test.native, tags: { dont_link_with, extension:native, file:test.native, link, native, ocaml, program, quiet }
+ocamlfind ocamlopt ../lib/camlCuda.o '-cclib=-lcuda' -linkpkg -I TinyLisp TinyLisp/BasicSExp.cmx TinyLisp/tinyLispParser.cmx TinyLisp/tinyLispLexer.cmx TinyLisp/TinyLisp.cmx ptx.cmx AsmGen.cmx CudaArray.cmx test.cmx -o test.native
+# Compilation successful.
