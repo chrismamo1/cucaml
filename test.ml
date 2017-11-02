@@ -1,14 +1,14 @@
 let () =
   Random.self_init();
-  let arr = Array.init 75_000_000 (fun _ -> Random.float 100.0) in
+  let arr = Array.init 75_000_000 (fun _ -> Random.float 10.0) in
   let arr1 = Array.copy arr in
   let arr2 = Array.copy arr in
   let kSrc =
     CudaArray.generateKernel
       {|  (if
-            (>= x 1.99999)
-            (* (* (* x 1.1) (* x 1.1)) (* (* x 1.1) (* x 1.1)))
-            (* (* x 1.1) (* x 1.1)))
+            (> 1.0 (sqrt x))
+            (rsqrt (* x 1.5))
+            (sqrt (* x 1.5)))
       |}
   in
   Printf.printf "kSrc:\n%s\n" kSrc;
@@ -24,9 +24,9 @@ let () =
   let () =
     for i = 0 to Array.length arr - 1 do
       let x = arr2.(i) in
-      if x >= 1.99999
-      then arr.(i) <- (x *. 1.1) *. (x *. 1.1) *. (x *. 1.1) *. (x *. 1.1)
-      else arr.(i) <- (x *. 1.1) *. (x *. 1.1)
+      if 1.0 >= sqrt x
+      then arr.(i) <- 1.0 /. (sqrt (x *. 1.5))
+      else arr.(i) <- sqrt (x *. 1.5)
     done
   in
   let seEnd = Unix.gettimeofday() in
