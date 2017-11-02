@@ -5,9 +5,9 @@ let () =
   let arr2 = Array.copy arr in
   let kSrc =
     CudaArray.generateKernel
-      {| (/
+      {| (sqrt (/
             (* 4.0 (* 3.14159265358979 (* x x)))
-            (* (/ 4.0 3.0) (* 3.14159265358979 (* x (* x x)))))
+            (* (/ 4.0 3.0) (* 3.14159265358979 (* x (* x x))))))
       |}
   in
   let arr' = [| 1.0; 2.0; 3.0 |] in
@@ -29,7 +29,7 @@ let () =
   let () =
     for i = 0 to Array.length arr - 1 do
       let x = arr2.(i) in
-      arr.(i) <- (4.0 *. 3.14159265358979 *. x *. x) /. ((4.0 /. 3.0) *. 3.14159265358979 *. x *. x *. x)
+      arr.(i) <- sqrt ((4.0 *. 3.14159265358979 *. x *. x) /. ((4.0 /. 3.0) *. 3.14159265358979 *. x *. x *. x))
     done
   in
   let seEnd = Unix.gettimeofday() in
