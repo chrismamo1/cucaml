@@ -1,5 +1,7 @@
 let () =
+  Random.self_init();
   let arr = [| 1.0; 2.0; 3.0 |] in
+  let arr = Array.init 100_000 (fun _ -> Random.float 100.0) in
   let kSrc = CudaArray.generateKernel "(if (>= x 1.99999) (* x x) (+ x 1.0))" in
   Printf.printf "kSrc:\n%s\n" kSrc;
   let cuStart = Unix.gettimeofday() in

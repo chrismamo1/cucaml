@@ -1,1 +1,1 @@
-test.ml: Array CudaArray Printf Unix
+test.ml: Array CudaArray Printf Random Unix
