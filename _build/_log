@@ -86,8 +86,8 @@ File "AsmGen.re", line 176, characters 6-27:
 Warning 8: this pattern-matching is not exhaustive.
 Here is an example of a case that is not matched:
 (None, _)
-File "AsmGen.re", line 177, characters 38-43:
-Warning 40: Ret64 was selected from type Ptx.RegisterType.t.
+File "AsmGen.re", line 177, characters 38-41:
+Warning 40: F64 was selected from type Ptx.RegisterType.t.
 It is not visible in the current scope, and will not 
 be selected if the type becomes unknown.
 File "AsmGen.re", line 185, characters 59-64:
@@ -165,8 +165,8 @@ File "AsmGen.re", line 176, characters 6-27:
 Warning 8: this pattern-matching is not exhaustive.
 Here is an example of a case that is not matched:
 (None, _)
-File "AsmGen.re", line 177, characters 38-43:
-Warning 40: Ret64 was selected from type Ptx.RegisterType.t.
+File "AsmGen.re", line 177, characters 38-41:
+Warning 40: F64 was selected from type Ptx.RegisterType.t.
 It is not visible in the current scope, and will not 
 be selected if the type becomes unknown.
 File "AsmGen.re", line 185, characters 59-64:
