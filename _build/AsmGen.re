@@ -82,7 +82,7 @@ let intrinsics = {
           ]
     }
   , { name: ">"
-    , target: RegisterType.F64
+    , target: RegisterType.Pred
     , params: [ RegisterType.F64 , RegisterType.F64 ]
     , generate:
         ([fd0, fd1], fd2) =>
