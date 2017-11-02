@@ -15,9 +15,10 @@ let () =
   let cuTime = cuEnd -. cuStart in
   let seStart = Unix.gettimeofday() in
   let () =
-    Array.iteri
-      (fun i x -> if x >= 1.99999 then arr.(i) <- x *. x else arr.(i) <- (x *. 1.1) *. (x *. 1.1))
-      arr2
+    for i = 0 to Array.length arr - 1 do
+      let x = arr2.(i) in
+      if x >= 1.99999 then arr.(i) <- x *. x else arr.(i) <- (x *. 1.1) *. (x *. 1.1)
+    done
   in
   let seEnd = Unix.gettimeofday() in
   let seTime = seEnd -. seStart in
