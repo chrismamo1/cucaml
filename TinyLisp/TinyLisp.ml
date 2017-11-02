@@ -29,7 +29,7 @@ let rec build source =
       | None -> raise(Failure "Invalid TinyLisp syntax")
   in
   let open BasicSExp in
-  let rec aux ?(need=false) (x: BasicSExp.t) =
+  let rec aux ?(need=true) (x: BasicSExp.t) =
     match x with
     | `SExp(
             (`Symb "fun")

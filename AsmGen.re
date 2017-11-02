@@ -2,9 +2,9 @@ open TinyLisp;
 
 type functionSpec =
   { name: string
-  , target: Ptx.RegisterSpec.t
-  , params: list(Ptx.RegisterSpec.t)
-  , body: list(Ptx.Statement.Instruction.t)
+  , target: Ptx.RegisterType.t
+  , params: list(Ptx.RegisterType.t)
+  , generate: (list(Ptx.RegisterSpec.t), Ptx.RegisterSpec.t) => list(Ptx.Statement.Instruction.t)
   };
 
 type sectionSpec =
@@ -23,12 +23,9 @@ let reserveFuncRegs(fSpec) = {
   open RegisterSpec;
   let pRegs =
     List.map(
-      (x) => {
-        let typ = x.rType;
-        RegisterSpec.generate(typ)
-      },
+      (typ) => RegisterSpec.generate(typ),
       fSpec.params);
-  let tReg = RegisterSpec.generate(fSpec.target.rType);
+  let tReg = RegisterSpec.generate(fSpec.target);
   (pRegs, tReg)
 };
 
@@ -48,16 +45,29 @@ let intrinsics = {
   let bd0 = RegisterSpec.{id: 0, rType: RegisterType.B64};
   let bd1 = RegisterSpec.{id: 1, rType: RegisterType.B64};
   [ { name: "="
-    , target: p0
-    , params: [ bd0 , bd1 ]
-    , body:
-      [ Statement.Instruction.(
-          `SetPredicate(
-              `Equal
-            , p0
-            , `Register(bd0)
-            , `Register(bd1)))
-      ]
+    , target: RegisterType.Pred
+    , params: [ RegisterType.B64 , RegisterType.B64 ]
+    , generate:
+        ([bd0, bd1], p0) =>
+          [ Statement.Instruction.(
+              `SetPredicate(
+                  `Equal
+                , p0
+                , `Register(bd0)
+                , `Register(bd1)))
+          ]
+    }
+  , { name: "*"
+    , target: RegisterType.F64
+    , params: [ RegisterType.F64 , RegisterType.F64 ]
+    , generate:
+        ([fd0, fd1], fd2) =>
+          [ Statement.Instruction.(
+              `Multiply(
+                  fd2
+                , `Register(fd0)
+                , `Register(fd1)))
+          ]
     }
   ];
 };
@@ -94,6 +104,7 @@ switch prog {
     | _ => raise(Failure("Please use a logical expression in your conditional"))
     }
 | FCall(name, params) =>
+    Printf.printf("Handling function call: %s\n", name);
     let `Function(func) =
       try 
         (List.find(
@@ -129,6 +140,17 @@ switch prog {
     };
     let body = List.flatten(body @ [ call ]);
     (Some(tReg), body)
+/*| Func(name, params, def) =>
+    let body = {
+      open Ptx.Statement;
+      let fSpec =
+        Directive.{
+            name: name
+          , return: `Declaration(Ptx.StateSpace.Register, )};
+      [ `Function({}) ]
+    };*/
+| Symb(s) =>
+    (Some(Ptx.RegisterSpec.{rType: Ptx.RegisterType.F64, id: 9999}), [])
 | Literal(Float(f)) =>
     let r = Ptx.RegisterSpec.generate(F64);
     let body = [ `Move(r, `FloatLiteral(f, r.rType)) ];
@@ -146,10 +168,85 @@ switch prog {
 let parseProgram(s) =
   TinyLisp.build(s);
 
-let prog = parseProgram("(if (= 16 16) 12.3 32.1)");
-let ctx = List.map((x) => `Function(x), intrinsics);
-let (Some(lastReg), geny) = generate(~ctx, prog);
-let body = geny @ [ `Move(Ptx.RegisterSpec.{rType: Ret64, id: 0}, `Register(lastReg)) ];
-let entry: Ptx.Statement.Directive.t = `Entry("myTestKernel", [], [], geny);
-let whole = [entry];
-print_endline(Ptx.Statement.emit(whole))
+let compileProgram(src) = {
+  /*let src = "(if (= 16 16) 12.3 32.1)"; */
+  let prog = parseProgram(src);
+  let ctx = List.map((x) => `Function(x), intrinsics);
+  let (Some(lastReg), geny) = generate(~ctx, prog);
+  let rReg = Ptx.RegisterSpec.{rType: Ret64, id: 0};
+  let body = geny @ [ `Move(rReg, `Register(lastReg)) ];
+  let func = {
+    open Ptx.Statement.Directive;
+    let rRegEmit = Ptx.RegisterSpec.emit(rReg);
+    let argDecl = `Declaration(Ptx.StateSpace.Register, Ptx.RegisterType.F64, "%fd9999", None);
+    let fSpec: functionSpec =
+      { name: "cuCamlKernelImpl"
+      , return: `Declaration(Ptx.StateSpace.Register, rReg.rType, rRegEmit, None)
+      , parameters: [argDecl]
+      , declarations:
+          List.filter(
+            (decl) =>
+              /* don't want to declare the return or parameter */
+              switch decl {
+              | `Declaration(_, _, "%rvald0", _)
+              | `Declaration(_, _, "%fd9999", _) =>
+                  false
+              | _ => true
+              },
+              Ptx.Statement.declareRegisters(body)
+          )
+      , body: body};
+    `Function(fSpec)
+  };
+  let whole = {
+    let kernel = {
+      open Ptx;
+      let kName = "myTestKernel";
+      open Statement;
+      open Directive;
+      let params =
+        [ `Declaration(StateSpace.Parameter, RegisterType.U64, "paramX", None)
+        , `Declaration(StateSpace.Parameter, RegisterType.U64, "sz", None)
+        ];
+      open Instruction;
+      open RegisterSpec;
+      open OperandSpec;
+      open RegisterType;
+      let body =
+        [ /*`Declaration(StateSpace.Register, U32, "%r", Some(5))
+        , `Declaration(StateSpace.Register, U64, "%rd", Some(4))
+        , `Declaration(StateSpace.Register, F64, "%fd", Some(1))
+        ,*/ `Load(StateSpace.Parameter, {rType: U64, id: 0}, `Dereference(`Label("paramX"), U64))
+        , `Move({rType: U32, id: 0}, `Register({rType: Special(Ntid(`x)), id: -1}))
+        , `Move({rType: U32, id: 1}, `Register({rType: Special(Ctaid(`x)), id: -1}))
+        , `Move({rType: U32, id: 2}, `Register({rType: Special(Tid(`x)), id: -1}))
+        , `MultiplyAndAdd(
+            {rType: U32, id: 3}
+          , `Register({rType: U32, id: 0})
+          , `Register({rType: U32, id: 1})
+          , `Register({rType: U32, id: 2}))
+        , `Multiply({rType: U64, id: 3}, `Register({rType: U32, id: 3}), `IntLiteral(RegisterType.getBytes(F64), U32))
+        , `ConvertAddress(StateSpace.Global, {rType: U64, id: 1}, `Register({rType: U64, id: 0}))
+          /* get the address of the i-th element of the array and put it in rd2 */
+        , `Add({rType: U64, id: 2}, `Register({rType: U64, id: 1}), `Register({rType: U64, id: 3}))
+          /* put the value of the i-th array element in fd9999 */
+        , `Move({rType: F64, id: 9999}, `Dereference(`Register({rType: U64, id: 2}), F64))
+        , `Call({rType: F64, id: 10000}, "cuCamlKernelImpl", [`Register({rType: F64, id: 9999})])
+        /*, `Store(StateSpace.Global, `Dereference(`Register({rType: U64, id: 2}), U32), `Register({rType: U32, id: 3}))*/
+        , `Store(StateSpace.Global, `Dereference(`Register({rType: U64, id: 2}), F64), `Register({rType: F64, id: 10_000}))
+        ];
+      let declarations = Statement.declareRegisters(body);
+      `Entry(kName, params, declarations, body)
+    };
+    open Ptx.Statement.Directive;
+    let whole =
+      [ `Version{major: 5, minor: 0}
+      , `Target("sm_20")
+      , `AddressSize(64)
+      , func
+      , kernel
+      ];
+    whole
+  };
+  Ptx.Statement.emit(whole)
+}
