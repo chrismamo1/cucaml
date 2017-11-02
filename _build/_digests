@@ -29,7 +29,7 @@
 "Rule: re -> cmo & cmi (%=AsmGen )": "\133J1\179\182\232X\190\236\011\142[\146\203`\207"
 "Rule: ocaml: ml -> cmo & cmi (%=test )": "%\138\207\128\r\172!\206\253,L\146\020\137\254J"
 "Rule: ocaml: menhir dependencies (%=TinyLisp/tinyLispParser )": "\196\187\234\015X\248\006\238l\147\134Y\240GT\192"
-"Rule: ocaml: cmx* & o* -> native (%=test )": "\143\194P\247\177\144\188\137a\215\240\r'I\140\019"
+"Rule: ocaml: cmx* & o* -> native (%=test )": "{\150\138\031y\221\247 5\231\154\170\238\193wx"
 "Rule: ocaml: ml & cmi -> cmx & o (%=CudaArray )": "\242\172\183\r=\028\173fS\253H\238\024\218\201\131"
 "Rule: ocaml: ml & cmi -> cmx & o (%=TinyLisp/BasicSExp )": "O\028\216\198`\170\\\234\252I\142\195\161\184\024\137"
 "Rule: re & rei -> cmx & o (%=ptx )": "\"\215\209n\000\160cUq\239\1539\163`\148\018"
