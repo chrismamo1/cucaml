@@ -561,6 +561,9 @@ module Statement = {
                 [a]
             | `Branch(None, _) =>
                 []
+            | `Return
+            | `Label(_) | `Call(_) =>
+                []
             };
           let acc = List.fold_left((acc, x) => RegisterSpecSet.add(x, acc), acc, regs);
           collectRegisters(tl, acc)
