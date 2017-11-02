@@ -98,7 +98,7 @@ File "AsmGen.re", line 217, characters 54-59:
 Warning 40: rType was selected from type Ptx.RegisterSpec.t.
 It is not visible in the current scope, and will not 
 be selected if the type becomes unknown.
-File "AsmGen.re", line 121, characters 0-3257:
+File "AsmGen.re", line 121, characters 0-3262:
 Warning 8: this pattern-matching is not exhaustive.
 Here is an example of a case that is not matched:
 (SExp _|Func (_, _, _)|Binding (_, _, _))
@@ -197,7 +197,7 @@ File "AsmGen.re", line 217, characters 54-59:
 Warning 40: rType was selected from type Ptx.RegisterSpec.t.
 It is not visible in the current scope, and will not 
 be selected if the type becomes unknown.
-File "AsmGen.re", line 121, characters 0-3257:
+File "AsmGen.re", line 121, characters 0-3262:
 Warning 8: this pattern-matching is not exhaustive.
 Here is an example of a case that is not matched:
 (SExp _|Func (_, _, _)|Binding (_, _, _))
@@ -224,9 +224,9 @@ Warning 11: this match case is unused.
 File "AsmGen.re", line 188, characters 8-14:
 Warning 26: unused variable pRegs'.
 # Target: CudaArray.cmx, tags: { compile, extension:cmx, extension:ml, file:CudaArray.cmx, file:CudaArray.ml, implem, native, ocaml, quiet }
-ocamlfind ocamlopt -c -I TinyLisp -o CudaArray.cmx CudaArray.ml
+ocamlfind ocamlopt -c -I TinyLisp -o CudaArray.cmx CudaArray.ml # cached
 # Target: test.cmx, tags: { compile, extension:cmx, extension:ml, file:test.cmx, file:test.ml, implem, native, ocaml, quiet }
-ocamlfind ocamlopt -c -I TinyLisp -o test.cmx test.ml
+ocamlfind ocamlopt -c -I TinyLisp -o test.cmx test.ml # cached
 # Target: test.native, tags: { dont_link_with, extension:native, file:test.native, link, native, ocaml, program, quiet }
 ocamlfind ocamlopt ../lib/camlCuda.o '-cclib=-lcuda' -linkpkg -I TinyLisp TinyLisp/BasicSExp.cmx TinyLisp/tinyLispParser.cmx TinyLisp/tinyLispLexer.cmx TinyLisp/TinyLisp.cmx ptx.cmx AsmGen.cmx CudaArray.cmx test.cmx -o test.native
 # Compilation successful.

@@ -152,7 +152,7 @@ switch prog {
           ];
         let body = List.concat(body);
         List.map(Ptx.Statement.Instruction.emit, body);
-        (fst(sec1), body)
+        (Some(unionReg), body)
     | _ => raise(Failure("Please use a logical expression in your conditional"))
     }
 | FCall(name, params) =>
