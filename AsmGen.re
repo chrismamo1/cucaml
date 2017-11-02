@@ -94,6 +94,19 @@ let intrinsics = {
                 , `Register(fd1)))
           ]
     }
+  , { name: ">="
+    , target: RegisterType.Pred
+    , params: [ RegisterType.F64 , RegisterType.F64 ]
+    , generate:
+        ([fd0, fd1], fd2) =>
+          [ Statement.Instruction.(
+              `SetPredicate(
+                  `GreaterThanOrEqual
+                , fd2
+                , `Register(fd0)
+                , `Register(fd1)))
+          ]
+    }
   ];
 };
 
