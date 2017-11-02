@@ -424,7 +424,7 @@ module Statement = {
             , RegisterSpec.emit(dst)
             , OperandSpec.emit(src))
       | `Nop =>
-          "noop"
+          "NOP"
       | _ =>
           raise(Invalid_argument("Can't emit that, is it an instruction?"))
       };
