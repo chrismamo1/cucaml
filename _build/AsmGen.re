@@ -127,7 +127,14 @@ switch prog {
     let sec2Label = Ptx.generateLabel();
     switch cond {
     | (Some({Ptx.RegisterSpec.rType: Pred} as predReg), instrs) =>
-        let (_, sec2) = sec2;
+        let rType =
+        switch (fst(sec1), fst(sec2)) {
+        | (Some(x), _)
+        | (_, Some(x)) => x.rType
+        | (None, None) => predReg.rType
+        };
+        let unionReg = Ptx.RegisterSpec.generate(rType);
+        let (rSec2, sec2) = sec2;
         let nop = `Move(predReg, `Register(predReg));
         let sec2h = try (List.hd(sec2)) {
           | _ => nop
@@ -136,9 +143,11 @@ switch prog {
           [ instrs
           , [ `Branch(Some(predReg), sec2Label) ]
           , snd(sec1)
+          , (switch (fst(sec1)) { | Some(rSec1) => [`Move(unionReg, `Register(rSec1))] | None => [] })
           , [`Branch(None, endLabel) ]
           , [`Label(sec2Label, sec2h)]
           , try (List.tl(sec2)) { | _ => []}
+          , switch rSec2 { | Some(rSec2) => [`Move(unionReg, `Register(rSec2))] | None => [] }
           , [ `Label(endLabel, nop) ]
           ];
         let body = List.concat(body);
