@@ -23,6 +23,6 @@ let () =
   let seTime = seEnd -. seStart in
   Printf.printf "CUDA time: %f\nSerial time: %f\n" cuTime seTime;
   for i = 0 to Array.length arr - 1 do
-    if arr1.(i) != arr2.(i) then raise(Failure "Arrays differ!!!");
+    if arr1.(i) != arr2.(i) then raise(Failure (Printf.sprintf "Arrays differ on element %d\n" i));
   done
   (*let _ = CudaArray.printFloatArray arr in ()*)
