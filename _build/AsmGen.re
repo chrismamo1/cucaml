@@ -109,7 +109,7 @@ switch prog {
           , [`Branch(None, endLabel) ]
           , [`Label(sec2Label, List.hd(sec2))]
           , List.tl(sec2)
-          , [ `Label(endLabel, `Return) ]
+          , [ `Label(endLabel, `Nop) ]
           ];
         let body = List.concat(body);
         List.map(Ptx.Statement.Instruction.emit, body);

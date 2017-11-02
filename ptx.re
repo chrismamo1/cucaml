@@ -254,6 +254,7 @@ module Statement = {
       | `Multiply(RegisterSpec.t, OperandSpec.t, OperandSpec.t)
       | `MultiplyAndAdd(RegisterSpec.t, OperandSpec.t, OperandSpec.t, OperandSpec.t)
       | `Move(RegisterSpec.t, OperandSpec.t)
+      | `Nop
       ];
 
     let rec emit(t: [> t]) =
@@ -422,6 +423,8 @@ module Statement = {
             , RegisterType.emit(dst.rType)
             , RegisterSpec.emit(dst)
             , OperandSpec.emit(src))
+      | `Nop =>
+          "nop.s"
       | _ =>
           raise(Invalid_argument("Can't emit that, is it an instruction?"))
       };
