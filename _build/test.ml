@@ -1,14 +1,15 @@
 let () =
   Random.self_init();
-  let arr = [| 1.0; 2.0; 3.0 |] in
   let arr = Array.init 500_000 (fun _ -> Random.float 100.0) in
+  let arr1 = Array.copy arr in
+  let arr2 = Array.copy arr in
   let kSrc = CudaArray.generateKernel "(if (>= x 1.99999) (* x x) (+ x 1.0))" in
   Printf.printf "kSrc:\n%s\n" kSrc;
   let cuStart = Unix.gettimeofday() in
   let () =
     CudaArray.mapFloatArrayInPlace
       kSrc
-      arr
+      arr1
   in
   let cuEnd = Unix.gettimeofday() in
   let cuTime = cuEnd -. cuStart in
@@ -16,9 +17,12 @@ let () =
   let () =
     Array.iteri
       (fun i x -> if x >= 1.99999 then arr.(i) <- x *. x else arr.(i) <- x +. 1.0)
-      arr
+      arr2
   in
   let seEnd = Unix.gettimeofday() in
   let seTime = seEnd -. seStart in
-  Printf.printf "CUDA time: %f\nSerial time: %f\n" cuTime seTime
+  Printf.printf "CUDA time: %f\nSerial time: %f\n" cuTime seTime;
+  for i = 0 to Array.length arr - 1 do
+    if arr1.(i) != arr2.(i) then raise(Failure "Arrays differ!!!");
+  done
   (*let _ = CudaArray.printFloatArray arr in ()*)

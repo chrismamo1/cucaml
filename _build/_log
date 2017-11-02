@@ -7,9 +7,6 @@ ocamlfind ocamldep -package unix -modules CudaArray.mli > CudaArray.mli.depends 
 ocamlfind ocamlc -c -package unix -I TinyLisp -o CudaArray.cmi CudaArray.mli # cached
 # Target: test.cmo, tags: { package(unix), byte, compile, extension:cmo, extension:ml, file:test.cmo, file:test.ml, implem, ocaml, quiet }
 ocamlfind ocamlc -c -package unix -I TinyLisp -o test.cmo test.ml
-+ ocamlfind ocamlc -c -package unix -I TinyLisp -o test.cmo test.ml
-File "test.ml", line 3, characters 6-9:
-Warning 26: unused variable arr.
 # Target: CudaArray.ml.depends, tags: { package(unix), extension:ml, file:CudaArray.ml, ocaml, ocamldep, quiet }
 ocamlfind ocamldep -package unix -modules CudaArray.ml > CudaArray.ml.depends # cached
 # Target: AsmGen.ml.depends, tags: { package(unix), extension:re, file:AsmGen.re, ocaml, ocamldep, quiet }
@@ -60,9 +57,6 @@ ocamlfind ocamlopt -c -package unix -pp '-package unix' -I TinyLisp -pp 'refmt -
 ocamlfind ocamlopt -c -package unix -I TinyLisp -o CudaArray.cmx CudaArray.ml # cached
 # Target: test.cmx, tags: { package(unix), compile, extension:cmx, extension:ml, file:test.cmx, file:test.ml, implem, native, ocaml, quiet }
 ocamlfind ocamlopt -c -package unix -I TinyLisp -o test.cmx test.ml
-+ ocamlfind ocamlopt -c -package unix -I TinyLisp -o test.cmx test.ml
-File "test.ml", line 3, characters 6-9:
-Warning 26: unused variable arr.
 # Target: test.native, tags: { package(unix), dont_link_with, extension:native, file:test.native, link, native, ocaml, program, quiet }
 ocamlfind ocamlopt ../lib/camlCuda.o '-cclib=-lcuda' -linkpkg -package unix -I TinyLisp TinyLisp/BasicSExp.cmx TinyLisp/tinyLispParser.cmx TinyLisp/tinyLispLexer.cmx TinyLisp/TinyLisp.cmx ptx.cmx AsmGen.cmx CudaArray.cmx test.cmx -o test.native
 # Compilation successful.
