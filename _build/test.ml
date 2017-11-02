@@ -3,7 +3,14 @@ let () =
   let arr = Array.init 75_000_000 (fun _ -> Random.float 100.0) in
   let arr1 = Array.copy arr in
   let arr2 = Array.copy arr in
-  let kSrc = CudaArray.generateKernel "(if (>= x 1.99999) (* x x) (* (* x 1.1) (* x 1.1)))" in
+  let kSrc =
+    CudaArray.generateKernel
+      {|  (if
+            (>= x 1.99999)
+            (* (* (* x 1.1) (* x 1.1)) (* (* x 1.1) (* x 1.1)))
+            (* (* x 1.1) (* x 1.1)))
+      |}
+  in
   Printf.printf "kSrc:\n%s\n" kSrc;
   let cuStart = Unix.gettimeofday() in
   let () =
@@ -17,7 +24,9 @@ let () =
   let () =
     for i = 0 to Array.length arr - 1 do
       let x = arr2.(i) in
-      if x >= 1.99999 then arr.(i) <- x *. x else arr.(i) <- (x *. 1.1) *. (x *. 1.1)
+      if x >= 1.99999
+      then arr.(i) <- (x *. 1.1) *. (x *. 1.1) *. (x *. 1.1) *. (x *. 1.1)
+      else arr.(i) <- (x *. 1.1) *. (x *. 1.1)
     done
   in
   let seEnd = Unix.gettimeofday() in
