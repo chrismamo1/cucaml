@@ -5,10 +5,10 @@ let () =
   let arr2 = Array.copy arr in
   let kSrc =
     CudaArray.generateKernel
-      {|  (if
-            (> 1.0 (sqrt x))
-            (rsqrt (* x 1.5))
-            (sqrt (* x 1.5)))
+      {|  (/
+            (* 4.0 (* 3.14159265358979 (* x x)))
+            (* (/ 4.0 3.0) (* 3.14159265358979 (* x (* x x))))
+          )
       |}
   in
   Printf.printf "kSrc:\n%s\n" kSrc;
@@ -24,9 +24,7 @@ let () =
   let () =
     for i = 0 to Array.length arr - 1 do
       let x = arr2.(i) in
-      if 1.0 >= sqrt x
-      then arr.(i) <- 1.0 /. (sqrt (x *. 1.5))
-      else arr.(i) <- sqrt (x *. 1.5)
+      arr.(i) <- (4.0 *. 3.14159265358979 *. x *. x) /. ((4.0 /. 3.0) *. 3.14159265358979 *. x *. x *. x)
     done
   in
   let seEnd = Unix.gettimeofday() in

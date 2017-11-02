@@ -244,6 +244,7 @@ module Statement = {
       | `Call(RegisterSpec.t, string, list(OperandSpec.t))
       | `Convert(RegisterSpec.t, OperandSpec.t)
       | `ConvertAddress(StateSpace.t, RegisterSpec.t, OperandSpec.t)
+      | `Divide(RegisterSpec.t, OperandSpec.t, OperandSpec.t)
       | `Label(string, t)
       | `Return
       | `ReverseSquareRoot(RegisterSpec.t, OperandSpec.t)
@@ -314,6 +315,22 @@ module Statement = {
             , RegisterType.emit(dst.rType)
             , RegisterSpec.emit(dst)
             , OperandSpec.emit(src))
+      | `Divide(dst, num, den) =>
+          open RegisterSpec;
+          let mods = {
+            open RegisterType;
+            switch (dst.rType, OperandSpec.getType(num)) {
+            | (F64, F64) => ".rn"
+            | _ => raise(Invalid_argument("invalid register types for div"))
+            }
+          };
+          Printf.sprintf(
+              "div%s%s\t%s,%s,%s"
+            , mods
+            , RegisterType.emit(OperandSpec.getType(num))
+            , RegisterSpec.emit(dst)
+            , OperandSpec.emit(num)
+            , OperandSpec.emit(den))
       | `Label(lName, t) =>
           Printf.sprintf("%s:\t%s", lName, emit(t))
       | `Return =>
@@ -571,6 +588,7 @@ module Statement = {
           let regs =
             switch hd {
             | `Add(a, b, c)
+            | `Divide(a, b, c)
             | `ShiftRight(a, b, c)
             | `ShiftLeft(a, b, c)
             | `SetPredicate(_, a, b, c)
@@ -601,7 +619,7 @@ module Statement = {
             | `Branch(None, _) =>
                 []
             | `Return
-            | `Label(_) | `Call(_) =>
+            | `Label(_) | `Nop =>
                 []
             };
           let acc = List.fold_left((acc, x) => RegisterSpecSet.add(x, acc), acc, regs);
