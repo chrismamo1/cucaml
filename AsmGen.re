@@ -178,12 +178,23 @@ let compileProgram(src) = {
   let func = {
     open Ptx.Statement.Directive;
     let rRegEmit = Ptx.RegisterSpec.emit(rReg);
-    let argDecl = `Declaration(Ptx.StateSpace.Register, Ptx.RegisterType.F64, "fd9999", None);
+    let argDecl = `Declaration(Ptx.StateSpace.Register, Ptx.RegisterType.F64, "%fd9999", None);
     let fSpec: functionSpec =
       { name: "cuCamlKernelImpl"
       , return: `Declaration(Ptx.StateSpace.Register, rReg.rType, rRegEmit, None)
       , parameters: [argDecl]
-      , declarations: Ptx.Statement.declareRegisters(body)
+      , declarations:
+          List.filter(
+            (decl) =>
+              /* don't want to declare the return or parameter */
+              switch decl {
+              | `Declaration(_, _, "%rvald0", _)
+              | `Declaration(_, _, "%fd9999", _) =>
+                  false
+              | _ => true
+              },
+              Ptx.Statement.declareRegisters(body)
+          )
       , body: body};
     `Function(fSpec)
   };
