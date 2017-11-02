@@ -174,7 +174,7 @@ let compileProgram(src) = {
   let prog = parseProgram(src);
   let ctx = List.map((x) => `Function(x), intrinsics);
   let (Some(lastReg), geny) = generate(~ctx, prog);
-  let rReg = Ptx.RegisterSpec.{rType: F64, id: 10_000};
+  let rReg = Ptx.RegisterSpec.{rType: Ret64, id: 0};
   let body = geny @ [ `Move(rReg, `Register(lastReg)) ];
   let func = {
     open Ptx.Statement.Directive;
