@@ -1,6 +1,6 @@
 let () =
   Random.self_init();
-  let arr = Array.init 50_000_000 (fun _ -> Random.float 100.0) in
+  let arr = Array.init 75_000_000 (fun _ -> Random.float 100.0) in
   let arr1 = Array.copy arr in
   let arr2 = Array.copy arr in
   let kSrc = CudaArray.generateKernel "(if (>= x 1.99999) (* x x) (* (* x 1.1) (* x 1.1)))" in
