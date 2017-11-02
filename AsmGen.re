@@ -108,7 +108,7 @@ switch prog {
           , snd(sec1)
           , [`Branch(None, endLabel) ]
           , [`Label(sec2Label, List.hd(sec2))]
-          , List.tl(sec2)
+          , try (List.tl(sec2)) { | _ => []}
           , [ `Label(endLabel, `Nop) ]
           ];
         let body = List.concat(body);
