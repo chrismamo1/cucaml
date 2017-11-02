@@ -8,7 +8,7 @@ ocamlfind ocamlc -c -package unix -I TinyLisp -o CudaArray.cmi CudaArray.mli # c
 # Target: test.cmo, tags: { package(unix), byte, compile, extension:cmo, extension:ml, file:test.cmo, file:test.ml, implem, ocaml, quiet }
 ocamlfind ocamlc -c -package unix -I TinyLisp -o test.cmo test.ml
 # Target: CudaArray.ml.depends, tags: { package(unix), extension:ml, file:CudaArray.ml, ocaml, ocamldep, quiet }
-ocamlfind ocamldep -package unix -modules CudaArray.ml > CudaArray.ml.depends # cached
+ocamlfind ocamldep -package unix -modules CudaArray.ml > CudaArray.ml.depends
 # Target: AsmGen.ml.depends, tags: { package(unix), extension:re, file:AsmGen.re, ocaml, ocamldep, quiet }
 ocamlfind ocamldep -package unix -modules -pp 'refmt --print binary' -impl AsmGen.re | tee AsmGen.re.depends > AsmGen.ml.depends # cached
 # Target: ptx.ml.depends, tags: { package(unix), extension:re, file:ptx.re, ocaml, ocamldep, quiet }
@@ -54,7 +54,7 @@ ocamlfind ocamlopt -c -package unix -I TinyLisp -o TinyLisp/TinyLisp.cmx TinyLis
 # Target: AsmGen.cmx, tags: { package(unix), compile, extension:cmx, extension:re, file:AsmGen.cmx, file:AsmGen.re, implem, native, ocaml, quiet }
 ocamlfind ocamlopt -c -package unix -pp '-package unix' -I TinyLisp -pp 'refmt --print binary' -o AsmGen.cmx -intf-suffix .rei -impl AsmGen.re # cached
 # Target: CudaArray.cmx, tags: { package(unix), compile, extension:cmx, extension:ml, file:CudaArray.cmx, file:CudaArray.ml, implem, native, ocaml, quiet }
-ocamlfind ocamlopt -c -package unix -I TinyLisp -o CudaArray.cmx CudaArray.ml # cached
+ocamlfind ocamlopt -c -package unix -I TinyLisp -o CudaArray.cmx CudaArray.ml
 # Target: test.cmx, tags: { package(unix), compile, extension:cmx, extension:ml, file:test.cmx, file:test.ml, implem, native, ocaml, quiet }
 ocamlfind ocamlopt -c -package unix -I TinyLisp -o test.cmx test.ml
 # Target: test.native, tags: { package(unix), dont_link_with, extension:native, file:test.native, link, native, ocaml, program, quiet }
