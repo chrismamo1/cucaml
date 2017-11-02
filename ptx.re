@@ -558,6 +558,7 @@ module Statement = {
                 |> addOptionToList(OperandSpec.getRegisterSpec(b))
                 |> addOptionToList(OperandSpec.getRegisterSpec(c))
                 |> addOptionToList(OperandSpec.getRegisterSpec(d))
+            | `Call(a, _, _)
             | `Branch(Some(a), _) =>
                 [a]
             | `Branch(None, _) =>
