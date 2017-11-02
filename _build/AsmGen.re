@@ -235,7 +235,7 @@ let compileProgram(src) = {
         , `Call({rType: F64, id: 10000}, "cuCamlKernelImpl", [`Register({rType: F64, id: 9999})])*/
         /*, `Store(StateSpace.Global, `Dereference(`Register({rType: U64, id: 2}), U32), `Register({rType: U32, id: 3}))*/
         /*, `Store(StateSpace.Global, `Dereference(`Register({rType: U64, id: 2}), F64), `Register({rType: F64, id: 10_000}))*/
-        , `Store(StateSpace.Global, `Dereference(`Register({rType: U64, id: 2}), F64), `FloatLiteral(42.0, F64))
+        , `Store(StateSpace.Global, `Dereference(`Register({rType: U64, id: 1}), F64), `FloatLiteral(42.0, F64))
         ];
       let declarations = Statement.declareRegisters(body);
       `Entry(kName, params, declarations, body)
