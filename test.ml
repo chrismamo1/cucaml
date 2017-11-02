@@ -1,6 +1,6 @@
 let () =
   let arr = [| 1.0; 2.0; 3.0 |] in
-  let kSrc = CudaArray.generateKernelSource "(* x x)" in
+  let kSrc = CudaArray.generateKernel "(+ x (* x x))" in
   Printf.printf "kSrc:\n%s\n" kSrc;
   let () =
     CudaArray.mapFloatArrayInPlace
