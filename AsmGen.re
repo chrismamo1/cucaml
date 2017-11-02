@@ -231,8 +231,7 @@ let compileProgram(src) = {
           /* get the address of the i-th element of the array and put it in rd2 */
         , `Add({rType: U64, id: 2}, `Register({rType: U64, id: 1}), `Register({rType: U64, id: 3}))
           /* put the value of the i-th array element in fd9999 */
-        , `Move({rType: B64, id: 47}, `Dereference(`Register({rType: U64, id: 2}), B64))
-        , `Convert({rType: F64, id: 9999}, `Dereference(`Register({rType: U64, id: 2}), B64))
+        , `Load(StateSpace.Global, {rType: F64, id: 9999}, `Dereference(`Register({rType: U64, id: 2}), B64))
         , `Call({rType: F64, id: 10000}, "cuCamlKernelImpl", [`Register({rType: F64, id: 9999})])
         /*, `Store(StateSpace.Global, `Dereference(`Register({rType: U64, id: 2}), U32), `Register({rType: U32, id: 3}))*/
         , `Store(StateSpace.Global, `Dereference(`Register({rType: U64, id: 2}), F64), `Register({rType: F64, id: 10_000}))
