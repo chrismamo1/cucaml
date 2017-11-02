@@ -142,12 +142,12 @@ switch prog {
         let body =
           [ instrs
           , [ `Branch(Some(predReg), sec2Label) ]
-          , snd(sec1)
-          , (switch (fst(sec1)) { | Some(rSec1) => [`Move(unionReg, `Register(rSec1))] | None => [] })
-          , [`Branch(None, endLabel) ]
-          , [`Label(sec2Label, sec2h)]
           , try (List.tl(sec2)) { | _ => []}
           , switch rSec2 { | Some(rSec2) => [`Move(unionReg, `Register(rSec2))] | None => [] }
+          , [`Branch(None, endLabel) ]
+          , [`Label(sec2Label, sec2h)]
+          , snd(sec1)
+          , (switch (fst(sec1)) { | Some(rSec1) => [`Move(unionReg, `Register(rSec1))] | None => [] })
           , [ `Label(endLabel, nop) ]
           ];
         let body = List.concat(body);
