@@ -13,7 +13,8 @@ let printFloatArray arr =
   Array.iteri (fun i x -> Printf.printf "arr[%d] = %f\n" i x) arr
 
 let mapFloatArrayInPlace code arr =
-  let _ = eMapFloatArrayInPlace arr (Array.length arr) code in
+  let st = eMapFloatArrayInPlace arr (Array.length arr) code in
+  let _ = Printf.printf "Return value: %f\n" st in
   ()
 
 (*let () =
