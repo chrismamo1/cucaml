@@ -1,2 +1,0 @@
-TinyLisp/tinyLispParser.ml: BasicSExp Lexing List
-TinyLisp/tinyLispParser.mli: BasicSExp Lexing

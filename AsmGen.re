@@ -256,7 +256,7 @@ switch prog {
 let parseProgram(s) =
   TinyLisp.build(s);
 
-let compileProgram(src) = {
+let compileProgram(src, otherFuncs) = {
   /*let src = "(if (= 16 16) 12.3 32.1)"; */
   let prog = parseProgram(src);
   let ctx = List.map((x) => `Function(x), intrinsics);
@@ -329,6 +329,7 @@ let compileProgram(src) = {
     };
     open Ptx.Statement.Directive;
     let whole =
+      otherFuncs @
       [ `Version{major: 5, minor: 0}
       , `Target("sm_20")
       , `AddressSize(64)

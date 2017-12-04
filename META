@@ -1,0 +1,5 @@
+name="cucaml"
+description="TODO"
+version="0.1"
+archive(native)="cucaml.cmxa"
+archive(byte)="cucaml.cma"
