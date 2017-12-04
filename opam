@@ -1,0 +1,19 @@
+opam-version: "1.2"
+name: "cucaml"
+version: "0.1"
+authors: [ "John Christopher McAlpine" ]
+maintainer: "christophermcalpine@gmail.com"
+homepage: "https://github.com/chrismamo1/ppx_cucaml"
+dev-repo: "https://github.com/chrismamo1/ppx_cucaml"
+bug-reports: "https://github.com/chrismamo1/ppx_cucaml/issues/"
+build: [
+  [make "native-code"] {ocaml-native}
+]
+install: [
+  [make "install"]
+]
+remove: [["ocamlfind" "remove" "cucaml"]]
+depends: [
+  "ocamlfind" {build & >= "1.5.2"}
+]
+available: [ocaml-version >= "4.04.1"]
