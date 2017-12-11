@@ -28,6 +28,7 @@ module RegisterType = {
   type t =
     | Any
     | S8
+    | U8
     | S32
     | S64
     | U32
@@ -43,7 +44,7 @@ module RegisterType = {
   let getBytes(t) =
     switch t {
     | Any | Pred => raise(Invalid_argument("We don't know the width of Any or Pred registers"))
-    | S8 => 1
+    | S8 | U8 => 1
     | S32 | U32 | F32 | B32 => 4
     | S64 | U64 | F64 | B64 | Ret64 => 8
     | Special(_) => raise(Failure("TODO: how wide are the special registers?"))
@@ -72,6 +73,7 @@ module RegisterType = {
     switch t {
     | Any => "rany"
     | S8 => "s8"
+    | U8 => "u8"
     | S32 => "s32"
     | S64 => "s64"
     | U32 => "u32"
@@ -104,7 +106,7 @@ module RegisterType = {
 
 module RegisterSpec = {
   type t = {
-    id: int,
+    id: string,
     rType: RegisterType.t
   };
 
@@ -121,6 +123,7 @@ module RegisterSpec = {
 
   let generate = {
     let s8Counter = ref(0);
+    let u8Counter = ref(0);
     let s32Counter = ref(0);
     let s64Counter = ref(0);
     let u32Counter = ref(0);
@@ -135,6 +138,7 @@ module RegisterSpec = {
       let counter =
         switch rType {
         | S8 => s8Counter
+        | U8 => u8Counter
         | S32 => s32Counter
         | S64 => s64Counter
         | U32 => u32Counter
@@ -150,7 +154,8 @@ module RegisterSpec = {
         };
       let id = counter.contents;
       incr(counter);
-      {rType,  id}
+      let id = string_of_int(id);
+      {rType, id}
     }
   };
 
@@ -166,33 +171,38 @@ module RegisterSpec = {
             }
       };
     open RegisterType;
-    switch t.rType {
-    | Special(sType) =>
-        let (sType, dim) = switch sType {
-        | Ntid(dim) => ("ntid", dim)
-        | Tid(dim) => ("tid", dim)
-        | Ctaid(dim) => ("ctaid", dim)
-        };
-        let dim =
-          switch dim {
-          | `x => "x"
-          | `y => "y"
-          | `z => "z"
+    try {
+      let nid = int_of_string(t.id);
+      switch t.rType {
+      | Special(sType) =>
+          let (sType, dim) = switch sType {
+          | Ntid(dim) => ("ntid", dim)
+          | Tid(dim) => ("tid", dim)
+          | Ctaid(dim) => ("ctaid", dim)
           };
-        Printf.sprintf("%%%s.%s", sType, dim)
-    | _ =>
-        let prefix = RegisterType.getPrefix(t.rType);
-        Printf.sprintf("%%%s%d", prefix, t.id)
-    };
+          let dim =
+            switch dim {
+            | `x => "x"
+            | `y => "y"
+            | `z => "z"
+            };
+          Printf.sprintf("%%%s.%s", sType, dim)
+      | _ =>
+          let prefix = RegisterType.getPrefix(t.rType);
+          Printf.sprintf("%%%s%d", prefix, nid)
+      };
+    } {
+    | _ => t.id
+    }
   };
 };
 
 module OperandSpec = {
   type basicOperand =
-    [ `Label(string)
-    | `Register(RegisterSpec.t)
+    [ `FloatLiteral(float, RegisterType.t)
     | `IntLiteral(int, RegisterType.t)
-    | `FloatLiteral(float, RegisterType.t)
+    | `Label(string)
+    | `Register(RegisterSpec.t)
     ];
   
   type t =
@@ -219,11 +229,18 @@ module OperandSpec = {
     switch t {
     | `Label(s) => s
     | `Register(rSpec) => RegisterSpec.emit(rSpec)
-    | `IntLiteral(n, RegisterType.U32 | RegisterType.U64 | RegisterType.B32) => string_of_int(n)
-    | `FloatLiteral(f, RegisterType.F32 | RegisterType.F64) => Printf.sprintf("%05.9f", f)
+    | `IntLiteral(n, RegisterType.S32 | RegisterType.U32 | RegisterType.S64 | RegisterType.U64 | RegisterType.B32) => string_of_int(n)
+    | `FloatLiteral(f, RegisterType.F32 | RegisterType.F64) => Printf.sprintf("%05.3f", f)
     | `Dereference(expr, _) => Printf.sprintf("[%s]", emit(expr: basicOperand :> t))
-    | `IntLiteral(_, _)
-    | `FloatLiteral(_, _) => raise(Invalid_argument("numeric literal type mismatch"))
+    | `IntLiteral(_, rType)
+    | `FloatLiteral(_, rType) =>
+        let cls =
+          switch t {
+          | `IntLiteral(_) => "IntLiteral"
+          | `FloatLiteral(_) => "FloatLiteral"
+          };
+        let msg = Printf.sprintf("%s doesn't take %s", cls, RegisterType.toString(rType));
+        raise(Invalid_argument("numeric literal type mismatch: " ++ msg))
     };
 };
 
@@ -240,6 +257,8 @@ module Statement = {
     /* keep in mind that PTX assembly syntax is [instr.dstType.srcType dst, src] */
     type t =
       [ `Add(RegisterSpec.t, OperandSpec.t, OperandSpec.t)
+      | `And(RegisterSpec.t, OperandSpec.t, OperandSpec.t)
+      | `AntiPredicated(RegisterSpec.t, t)
       | `Branch(option(RegisterSpec.t), string)
       | `Call(RegisterSpec.t, string, list(OperandSpec.t))
       | `Convert(RegisterSpec.t, OperandSpec.t)
@@ -254,10 +273,12 @@ module Statement = {
       | `SquareRoot(RegisterSpec.t, OperandSpec.t)
       | `Load(StateSpace.t, RegisterSpec.t, OperandSpec.t)
       | `Store(StateSpace.t, OperandSpec.t, OperandSpec.t)
+      | `Subtract(RegisterSpec.t, OperandSpec.t, OperandSpec.t)
       | `Multiply(RegisterSpec.t, OperandSpec.t, OperandSpec.t)
       | `MultiplyAndAdd(RegisterSpec.t, OperandSpec.t, OperandSpec.t, OperandSpec.t)
       | `Move(RegisterSpec.t, OperandSpec.t)
       | `Nop
+      | `Predicated(RegisterSpec.t, t)
       ];
 
     let rec emit(t: [> t]) =
@@ -270,6 +291,16 @@ module Statement = {
             , RegisterSpec.emit(dst)
             , OperandSpec.emit(addend1)
             , OperandSpec.emit(addend2))
+      | `And(dst, addend1, addend2) =>
+          open RegisterSpec;
+          Printf.sprintf(
+              "and%s\t%s,%s,%s"
+            , RegisterType.emit(dst.rType)
+            , RegisterSpec.emit(dst)
+            , OperandSpec.emit(addend1)
+            , OperandSpec.emit(addend2))
+      | `AntiPredicated(predReg, instr) =>
+          Printf.sprintf("@!%s\t%s", RegisterSpec.emit(predReg), emit(instr))
       | `Branch(pred, lName) =>
           switch pred {
           | Some(pred) =>
@@ -427,6 +458,14 @@ module Statement = {
             , RegisterType.emit(OperandSpec.getType(dst))
             , OperandSpec.emit(dst)
             , OperandSpec.emit(src))
+      | `Subtract(dst, subend1, subend2) =>
+          open RegisterSpec;
+          Printf.sprintf(
+              "sub%s\t%s,%s,%s"
+            , RegisterType.emit(dst.rType)
+            , RegisterSpec.emit(dst)
+            , OperandSpec.emit(subend1)
+            , OperandSpec.emit(subend2))
       | `Multiply(dst, factor1, factor2) =>
           open RegisterSpec;
           let mods = {
@@ -474,6 +513,8 @@ module Statement = {
             , OperandSpec.emit(src))
       | `Nop =>
           "nop.s"
+      | `Predicated(predReg, instr) =>
+          Printf.sprintf("@%s\t%s", RegisterSpec.emit(predReg), emit(instr))
       | _ =>
           raise(Invalid_argument("Can't emit that, is it an instruction?"))
       };
@@ -580,18 +621,20 @@ module Statement = {
     };
 
   /** TODO: write this */
-  let declareRegisters(instructions: list(Instruction.t)) = {
+  let declareRegisters(~pleaseDoNot=?, instructions: list(Instruction.t)) = {
     let rec collectRegisters(ls, acc) =
       switch ls {
       | [] => acc
       | [(hd: Instruction.t), ...tl] =>
-          let regs =
-            switch hd {
+          let rec getRegs(x) =
+            switch x {
             | `Add(a, b, c)
+            | `And(a, b, c)
             | `Divide(a, b, c)
             | `ShiftRight(a, b, c)
             | `ShiftLeft(a, b, c)
             | `SetPredicate(_, a, b, c)
+            | `Subtract(a, b, c)
             | `Multiply(a, b, c) =>
                 [a]
                 |> addOptionToList(OperandSpec.getRegisterSpec(b))
@@ -613,7 +656,20 @@ module Statement = {
                 |> addOptionToList(OperandSpec.getRegisterSpec(b))
                 |> addOptionToList(OperandSpec.getRegisterSpec(c))
                 |> addOptionToList(OperandSpec.getRegisterSpec(d))
-            | `Call(a, _, _)
+            | `Predicated(a, instr)
+            | `AntiPredicated(a, instr) =>
+                [a, ...getRegs(instr)]
+            | `Call(a, _, args) =>
+                let regs =
+                  List.map(OperandSpec.getRegisterSpec, args)
+                  |> List.fold_left(
+                      (acc, x) =>
+                        switch x {
+                        | Some(x) => [x, ...acc]
+                        | None => acc
+                        },
+                      []);
+                [a, ...regs]
             | `Branch(Some(a), _) =>
                 [a]
             | `Branch(None, _) =>
@@ -622,6 +678,7 @@ module Statement = {
             | `Label(_) | `Nop =>
                 []
             };
+          let regs = getRegs(hd);
           let acc = List.fold_left((acc, x) => RegisterSpecSet.add(x, acc), acc, regs);
           collectRegisters(tl, acc)
       };
@@ -635,14 +692,29 @@ module Statement = {
           | _ => true
           },
         collectRegisters(instructions, acc));
+    let uniqueRegisters' =
+      switch (pleaseDoNot) {
+      | Some(ls) =>
+          List.fold_left(
+            (acc, el) => RegisterSpecSet.remove(el, acc),
+            uniqueRegisters, ls)
+      | None => uniqueRegisters
+      };
     List.map(
-        (x) =>
-          `Declaration(
-              StateSpace.Register
-            , x.rType
-            , Printf.sprintf("%%%s%d", RegisterType.getPrefix(x.rType), x.id)
-            , None)
-      , RegisterSpecSet.elements(uniqueRegisters))
+      (x) => {
+        let regName =
+          try {
+            Printf.sprintf("%%%s%d", RegisterType.getPrefix(x.rType), int_of_string(x.id))
+          } {
+          | _ => x.id
+          };
+        `Declaration(
+            StateSpace.Register
+          , x.rType
+          , regName
+          , None)
+      },
+      RegisterSpecSet.elements(uniqueRegisters'))
   };
 
   let emit(t) = {
@@ -668,33 +740,33 @@ let examplePtx = {
       [ /*`Declaration(StateSpace.Register, U32, "%r", Some(5))
       , `Declaration(StateSpace.Register, U64, "%rd", Some(4))
       , `Declaration(StateSpace.Register, F64, "%fd", Some(1))
-      ,*/ `Load(StateSpace.Parameter, {rType: U64, id: 0}, `Dereference(`Label("paramX"), U64))
-      , `Move({rType: U32, id: 0}, `Register({rType: Special(Ntid(`x)), id: -1}))
-      , `Move({rType: U32, id: 1}, `Register({rType: Special(Ctaid(`x)), id: -1}))
-      , `Move({rType: U32, id: 2}, `Register({rType: Special(Tid(`x)), id: -1}))
+      ,*/ `Load(StateSpace.Parameter, {rType: U64, id: "0"}, `Dereference(`Label("paramX"), U64))
+      , `Move({rType: U32, id: "0"}, `Register({rType: Special(Ntid(`x)), id: "-1"}))
+      , `Move({rType: U32, id: "1"}, `Register({rType: Special(Ctaid(`x)), id: "-1"}))
+      , `Move({rType: U32, id: "2"}, `Register({rType: Special(Tid(`x)), id: "-1"}))
       , `MultiplyAndAdd(
-          {rType: U32, id: 3}
-        , `Register({rType: U32, id: 0})
-        , `Register({rType: U32, id: 1})
-        , `Register({rType: U32, id: 2}))
-      , `Multiply({rType: U64, id: 3}, `Register({rType: U32, id: 3}), `IntLiteral(RegisterType.getBytes(F64), U32))
-      , `ConvertAddress(StateSpace.Global, {rType: U64, id: 1}, `Register({rType: U64, id: 0}))
-      , `Add({rType: U64, id: 2}, `Register({rType: U64, id: 1}), `Register({rType: U64, id: 3}))
-      , `Convert({rType: F64, id: 0}, `Register({rType: U32, id: 3}))
+          {rType: U32, id: "3"}
+        , `Register({rType: U32, id: "0"})
+        , `Register({rType: U32, id: "1"})
+        , `Register({rType: U32, id: "2"}))
+      , `Multiply({rType: U64, id: "3"}, `Register({rType: U32, id: "3"}), `IntLiteral(RegisterType.getBytes(F64), U32))
+      , `ConvertAddress(StateSpace.Global, {rType: U64, id: "1"}, `Register({rType: U64, id: "0"}))
+      , `Add({rType: U64, id: "2"}, `Register({rType: U64, id: "1"}), `Register({rType: U64, id: "3"}))
+      , `Convert({rType: F64, id: "0"}, `Register({rType: U32, id: "3"}))
       /*, `Store(StateSpace.Global, `Dereference(`Register({rType: U64, id: 2}), U32), `Register({rType: U32, id: 3}))*/
-      , `Store(StateSpace.Global, `Dereference(`Register({rType: U64, id: 2}), F64), `FloatLiteral(69.0, F64))
+      , `Store(StateSpace.Global, `Dereference(`Register({rType: U64, id: "2"}), F64), `FloatLiteral(69.0, F64))
       ];
     let declarations = Statement.declareRegisters(body);
     `Entry(kName, params, declarations, body)
   };
   open Statement.Directive;
   let whole =
-    [ `Version{major: 5, minor: 0}
+    [ `Version{major: 4, minor: 3}
     , `Target("sm_20")
     , `AddressSize(64)
     , kernel
     ];
   let code = Statement.emit(whole);
-  print_endline(code);
+  /*print_endline(code);*/
   code
 };

@@ -1,3 +1,7 @@
-<lib>: -traverse
-<test.native>: ccopt(-L/usr/lib/nvidia-384/), cclib(-lcuda), package(unix), linkall, "unix.cmxa"
+true: use_menhir
+<test.native>: ccopt(-L/usr/lib/nvidia-384/), cclib(-lcuda), native
+<cucaml.a>: native, linkall
 <node_modules/*>: -traverse
+<TinyLisp>: traverse
+<ppx_cucaml.*>: package(ppx_tools), package(ppx_tools.metaquot)
+<example.{cmo,cmx}>: package(cucaml.ppx)
