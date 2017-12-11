@@ -1,13 +1,17 @@
 {
   open Lexing
   open TinyLispParser
+
+  let parse_error x =
+    Printf.printf "Custom parse_error: %s\n\n" x
 }
 
 let lparen = '('
 let rparen = ')'
 let sym = ['a'-'z' 'A'-'Z' '_' '=' '>' '<' '*' '/' '+' '-'] ['a'-'z' 'A'-'Z' '_' '0'-'9' '/' '+' '-' '.' '=' '>' '<']*
 let white = [' ' '\t' '\n' '\r']+
-let num = ['+' '-']? ('.'? ['0'-'9']+ | ['0'-'9']+ '.' ['0'-'9']+)
+let real = ['+' '-']? ('.' ['0'-'9']+ | ['0'-'9']+ '.' ['0'-'9']+ | ['0'-'9']+ '.')
+let int = ['+' '-']? ['0'-'9']+
 let halfq = '\''
 let halfq_e = "\\'"
 let bs_e = "\\\\"
@@ -31,6 +35,10 @@ rule read =
         in
         CHAR(Char.chr code)
       }
+  | halfq (litchar as lc) halfq {
+        CHAR(lc.[0])
+      }
   | sym { SYM(Lexing.lexeme lexbuf) }
-  | num { NUM(float_of_string (Lexing.lexeme lexbuf)) }
+  | real { FLOATLIT(float_of_string (Lexing.lexeme lexbuf)) }
+  | int { INTLIT(int_of_string (Lexing.lexeme lexbuf)) }
   | eof { EOF }

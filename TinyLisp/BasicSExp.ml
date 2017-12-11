@@ -1,7 +1,8 @@
 type t =
   [ `SExp of t list
   | `Symb of string
-  | `Num of float
+  | `Floatlit of float
+  | `Intlit of int
   | `Char of char
   ]
 
@@ -14,5 +15,6 @@ let rec pprint = function
       in
       "(" ^ aux ls ^ ")"
   | `Symb(s) -> s
-  | `Num(n) -> string_of_float n
+  | `Floatlit(f) -> string_of_float f
+  | `Intlit(n) -> string_of_int n
   | `Char(c) -> "'" ^ Char.escaped c ^ "'"
