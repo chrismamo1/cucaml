@@ -10,3 +10,8 @@ package "ppx" (
   version = "0.1"
   ppx = "./ppx_cucaml.native"
 )
+
+package "runtime" (
+  version = "0.1"
+  archive(native) = "CudaArray.cmxa"
+)

@@ -1,8 +1,14 @@
-ppx_cucaml.native: ppx_cucaml.re native-code
-	rebuild -use-ocamlfind -use-menhir -I TinyLisp ppx_cucaml.native
+runtime/_build/camlCuda.o: runtime/camlCuda.c
+	cd runtime && ocamlbuild -use-ocamlfind camlCuda.o -cflag '-ccopt=-I/usr/local/cuda/include/' && cd ..
+
+runtime/_build/CudaArray.cmxa: runtime/_build/camlCuda.o runtime/CudaArray.ml
+	cd runtime && ocamlbuild -use-ocamlfind CudaArray.cmxa && cd _build && ocamlmklib -failsafe -o CudaArray -ccopt -L/usr/lib/nvidia-384/ -ccopt -l:libnvidia-fatbinaryloader.so.384.90 camlCuda.o CudaArray.cmx -lcuda || cd .. && cd ..
+
+ppx_cucaml.native:
+	rebuild -use-ocamlfind -use-menhir -Is TinyLisp ppx_cucaml.native
 
 _build/cucaml.cmxa:
-	rebuild -use-ocamlfind -use-menhir -I TinyLisp cucaml.cmxa # -lflag ../camlCuda.o
+	rebuild -use-ocamlfind -use-menhir -Is TinyLisp cucaml.cmxa
 
 cucaml.cmx:
 	rebuild -use-ocamlfind -use-menhir -I TinyLisp cucaml.cmx -lflag ../camlCuda.o
@@ -17,11 +23,11 @@ _build/cucaml.cma:
 cucaml.a:
 	rebuild -use-ocamlfind -Is TinyLisp cucaml.a
 
-native-code: _build/cucaml.cmxa _build/cucaml.cmxs
+native-code: _build/cucaml.cmxa _build/cucaml.cmxs runtime/_build/CudaArray.cmxa
 byte-code: _build/cucaml.cma
 
-install: native-code byte-code ppx_cucaml.native
-	ocamlfind install cucaml `find ./_build -maxdepth 2 -type f` ppx_cucaml.native META
+install: ppx_cucaml.native native-code # byte-code
+	ocamlfind install cucaml `find ./_build -maxdepth 2 -type f` `find ./runtime/_build -maxdepth 2 -type f` ppx_cucaml.native META
 
 #test.native:
 #	rebuild -lflag ../lib/camlCuda.o -use-ocamlfind -use-menhir -Is TinyLisp test.native

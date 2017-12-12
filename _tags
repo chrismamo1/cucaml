@@ -1,7 +1,13 @@
-true: use_menhir
-<test.native>: ccopt(-L/usr/lib/nvidia-384/), cclib(-lcuda), native
 <cucaml.a>: native, linkall
 <node_modules/*>: -traverse
 <TinyLisp>: traverse
 <ppx_cucaml.*>: package(ppx_tools), package(ppx_tools.metaquot)
 <example.{cmo,cmx}>: package(cucaml.ppx)
+<runtime>: -traverse
+
+<test.native>: ccopt(-L/usr/lib/nvidia-384/), cclib(-lcuda), native, package(cucaml.ppx), needs_unix, needs_camlcuda, ccopt(-l:libnvidia-fatbinaryloader.so.384.90)
+<test.{cmo,cmx}>: package(cucaml.ppx)
+<camlCuda.*>: ccopt(-L/usr/local/cuda/include/), ccopt(-I/usr/local/cuda/include/)
+<libCudaArray.a>: ccopt('-l:libnvidia-fatbinaryloader.so.384.90'), ccopt(-L/usr/local/cuda/include/)
+<CudaArray.{cmo,cmx,cmxa}>: needs_camlcuda
+<CudaArray.{a}>: needs_camlcuda
